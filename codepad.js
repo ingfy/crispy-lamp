@@ -1,6 +1,5 @@
 //simple.js
 
-
 var languageClasses = {
     'lang-php': 'PHP',
     'lang-py': 'Python',

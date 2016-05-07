@@ -15,5 +15,16 @@
   "bugs": {
     "url": "https://github.com/ingfy/ts-talk/issues"
   },
-  "homepage": "https://github.com/ingfy/ts-talk#readme"
+  "homepage": "https://github.com/ingfy/ts-talk#readme",
+  "devDependencies": {
+    "del": "^2.2.0",
+    "gulp-mocha": "^2.2.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-typescript": "^2.13.3",
+    "gulp-zip": "^3.2.0",
+    "through2": "^2.0.1",
+    "typescript": "^1.8.10",
+    "typescript-require": "^0.2.9-1",
+    "typings": "^0.8.1"
+  }
 }
