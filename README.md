@@ -64,3 +64,7 @@ browserify, hvorfor?
 ### Testing
 
 gulp-mocha + typescript-require
+
+## Filewriter? FIlesystem? webrtc/MediaStream??!?!
+
+Disse er typings som chrome-typings er avhengige av.

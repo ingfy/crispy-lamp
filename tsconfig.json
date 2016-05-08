@@ -1,13 +1,15 @@
 {
     "compilerOptions": {
-        "declaration": true,
-        "module": "commonjs", 
-        "target": "es5", 
-        "moduleResolution": "node",
-        "sourceMap": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "noImplicitAny": false,
-        "removeComments": false
-    }
+        "module": "system",
+        "target": "es5",
+        "outDir": "build",
+        "sourceMap": false,
+        "noImplicitAny": false
+    },
+    "exclude": [
+        "node_modules",
+        "typings/browser.d.ts",
+        "typings/browser",
+        "build"
+    ]
 }
