@@ -4,7 +4,6 @@ let gulp = require('gulp');
 let mocha = require('gulp-mocha');
 let del = require('del');
 let sourcemaps = require('gulp-sourcemaps');
-let mergeJson = require('gulp-merge-json');
 let zip = require('gulp-zip');
 let typescript = require('gulp-typescript');
 
