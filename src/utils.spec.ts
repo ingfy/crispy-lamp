@@ -1,13 +1,15 @@
-/// <reference path="../typings/main.d.ts" />
+import {expect} from 'chai';
 
-import chai = require('chai');
-
-import {createElement} from './utils';
+import * as utils from './utils';
 
 describe('utils', () => {
-   describe('createElement', () => {
-       it('should return a bare element when given no attributes', () => {
-           chai.expect(createElement('p').getAttribute('class')).to.equal(null);
-       });
-   });
+    describe('find()', () => {
+        it('should return null for an empty list', () => {
+            expect(utils.find([], () => true)).to.be.null;
+        });
+        
+        it('should return the first match', () => {
+            expect(utils.find([1, 2], () => true)).to.equal(1);
+        });
+    });
 });

@@ -3,23 +3,22 @@
 	"description": "StackOverflow code run buttons",
 	"version": "0.0.1",
 	"manifest_version": 2,
-	"permissions": [
-		"tabs", "background"
-	],
+	"permissions": [],
 	"web_accessible_resources": [
-		"app/addOpenButtons.js",
-		"app/addOpenButtons.map.js",
-		"app/utils.js",
-		"app/utils.map.js"
 	],
 	"icons": {
 		"128": "resources/icon128.png"
 	},
 	"content_scripts": [{
         "matches": [
-            "https://*.stackoverflow.com/*",
-            "http://*.stackoverflow.com/*"
+            "*://*.stackoverflow.com/*"
         ],
         "js": ["contentScript.js"]
-    }]
+    }],
+	"page_action": {
+		"default_icon": {
+			"128": "resources/icon128.png"
+		},
+		"default_title": "Reload Extension and Page"
+	}
 }

@@ -6,4 +6,4 @@ System.config({
         }
     }
 })
-System.import('app/addOpenButtons');
+System.import('app/processStackOverflow').then(process => process.main());

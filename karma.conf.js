@@ -21,7 +21,7 @@ module.exports = config => {
                     'chai': 'node_modules/chai/chai.js'
                 },
                 packages: {
-                    'build': {
+                    'build/app': {
                         defaultExtension: 'js'
                     }
                 }
@@ -37,10 +37,13 @@ module.exports = config => {
             {pattern: 'build/*.spec.js', included: true, watched: true},
             {pattern: 'build/**/*.spec.js', included: true, watched: true}
         ],
+        exclude: [
+            'build/contentScript.js'
+        ],
         reporters: ['mocha'],
         port: 9876,
         colors: true,
-        logLevel: config.LOG_INFO,
+        logLevel: config.LOG_WARN,
         autoWatch: true,
         browsers: ['PhantomJS'],
         singleRun: true
