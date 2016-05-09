@@ -10,7 +10,6 @@
         "node_modules",
         "typings/browser.d.ts",
         "typings/browser",
-        "build",
-        "gulpfile.ts"
+        "build"
     ]
 }
