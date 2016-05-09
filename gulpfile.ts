@@ -7,7 +7,7 @@ import sourcemaps = require('gulp-sourcemaps');
 import zip = require('gulp-zip');
 import typescript = require('gulp-typescript');
 import fs = require('fs');
-import karma = require('karma');
+import {Server} from 'karma';
 import concat = require('gulp-concat');
 import glob = require('glob');
 import through = require('through2');
@@ -55,16 +55,16 @@ gulp.task('zip', ['build'], () => {
         .pipe(gulp.dest('dist'));
 });
 
-function karmaServer(singleRun) {
-    return new Promise(resolve => new karma.Server({
+function karmaServer(singleRun: boolean, cb?: () => void) {    
+    new Server({
         configFile: __dirname + '/karma.conf.js',
         singleRun: singleRun
-    }, resolve).start());
+    }, cb).start();
 }
 
-gulp.task('test', ['build'], cb => karmaServer(true).then(cb));
+gulp.task('test', ['build'], cb => karmaServer(true, cb));
 
-gulp.task('test-watch', cb => karmaServer(false).then(cb));
+gulp.task('test-watch', cb => karmaServer(false, cb));
 gulp.task('watch', () => {
     gulp.watch("src/**/*", ['build']);
     karmaServer(false);
