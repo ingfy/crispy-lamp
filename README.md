@@ -118,15 +118,24 @@ Presentasjonen består av å bygge denne utvidelsen live.
 
 ### 2. De første filene: den første kildefila og alt det andre
 
-* git init
-* Husk .gitignore!
-* npm init
-* manifest.json
+1. git init
+2. Husk .gitignore!
+
+   ```gitignore
+   dist/
+   build/
+   node_modules/
+   tmp/
+   typings/
+   ``` 
+
+3. npm init
+4. manifest.json
 
     ```json
     {
-      "name": "ts-talk",
-      "description": "StackOverflow code run buttons",
+      "name": "<navn>",
+      "description": "<beskrivelse>",
       "version": "0.0.1",
       "manifest_version": 2,
       "permissions": [],
@@ -140,7 +149,7 @@ Presentasjonen består av å bygge denne utvidelsen live.
     }
     ```
   
-* src/contentScript.ts
+5. src/contentScript.ts
 
     ```javascript
     var hello = document.createElement('p');
@@ -148,32 +157,136 @@ Presentasjonen består av å bygge denne utvidelsen live.
     document.body.appendChild(hello);
     ```
     
-* src/contentScript.spec.ts (????? -- ;)...)
+6. src/contentScript.spec.ts (????? -- ;)...)
 
     ```javascript
     // TODO: test applikasjonen! (husk å late som at du skrev testene først)
     ```
     
-* Ikonet vårt! Viktig å velge riktig
-* Bygg ts-fila manuelt via VS Code og lag pakke manuelt.
+7. Ikonet vårt! https://githyb.com/ingfy/crispy-lamp/resources/icon128.png
+8. Bygg ts-fila manuelt via VS Code og lag pakke manuelt.
+9. Last inn i Chrome som developer extension og gå til StackOverflow og sjekk at det kommer en ny tag der
 
 ### 3. Gulp: Starte på gulpfila
 
-* Gulpfile.ts med typescript.transpile();
-* Must-have gulpoppgaver:
+1. Lag en `typescript.json` for å deklarere kompileringen. Denne skal brukes i gulpfila.
+    
+    ```json
+    {
+      "compilerOptions": {
+        "target": "es5",
+        "outDir": "build",
+        "sourceMap": false,
+        "noImplicitAny": false
+      },
+      "exclude": [
+        "node_modules",
+        "build",
+        "gulpfile.ts"
+      ]
+    }
+    ```
+2. Installere gulp og de pluginene vi trenger:
+
+    ```bash
+    $ npm install -g gulp typescript
+    $ npm install --save-dev typescript gulp del gulp-sourcemaps gulp-typescript
+    ``` 
+    
+3. Gulpfile.ts med typescript.transpile();
+    
+    ```javascript
+    let typescript = require('typescript');
+    let fs = require('fs');
+    let gulpfile = fs.readFileSync('./gulpfile.ts').toString();
+    eval(typescript.transpile(gulpfile));
+    ```
+    
+4. Must-have gulpoppgaver:
   + compile
   + build
   + resources
   + manifest
-* Hvorfor må vi bruke en merkelig måte på å transpilere gulpfila?
-* Starte med typings
+  + clean
+  
+   ```typescript
+   import gulp = require('gulp');
+   import del = require('del');
+   import sourcemaps = require('gulp-sourcemaps');
+   import typescript = require('gulp-typescript');
+   import fs = require('fs');
+   
+   gulp.task('compile', () => {
+       let project = typescript.createProject('tsconfig.json');
+       
+       return project.src()
+           .pipe(sourcemaps.init())
+           .pipe(typescript(project))
+           .pipe(sourcemaps.write({sourceRoot: './src'}))
+           .pipe(gulp.dest('build'));
+   });
+
+   gulp.task('manifest', () => {
+       return gulp.src('manifest.json')
+           .pipe(gulp.dest('build'));
+   });
+
+   gulp.task('resources', () => {
+       return gulp.src('resources/**/*')
+           .pipe(gulp.dest('build/resources'));
+   });
+   gulp.task('build', ['compile', 'manifest', 'resources']);
+
+   gulp.task('clean', cb => del.sync(['build']));
+
+   gulp.task('watch', () => gulp.watch("src/**/*", ['build']));
+
+   gulp.task('default', ['build']);
+   ```
+  
+5. Hvorfor må vi bruke en merkelig måte på å transpilere gulpfila?
+6. Starte med typings. Typings er et program som lar oss laste ned og holde styr på typedeklarasjoner som Typescript kan bruke.
+
+    * Installere typings globalt: `npm install -g typings`
+    * Typings vi trenger til hele prosjektet: https://github.com/ingfy/crispy-lamp/blob/master/typings.json    
+    
+7. Få "POC-utvidelsen" til å kjøre med gulp
 
 ### 4. Hva med flere kildekodefiler i applikasjonen?
 
-Vi vil så absolutt bruke Typescript sitt modulsystem.
+Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem som nettleseren støtter, siden Chrome-utvidelser kjører i nettleseren. SystemJS gir svaret: "universell modullaster for JavaScript". Vanligvis brukes SystemJS med at bibiolteket lastes først i en browser, også kjøres en konfigurasjon, før den første fila lastes og kjøres ved hjelp av `System.import()`. Vi kan konkattenere disse tre stegene til en JavaScript-fil ved hjelp av en gulptask. Vi ender dermed opp med en ny fil som entry-point til content-scriptet vårt.
  
-* Ta stilling til SystemJS
-* Nytt entry point
+1. Installer SystemJS: `npm install --save system.js`
+2. Ny fil som kan konfe SystemJS og laste applikasjonen:
+
+    ```javascript
+    System.config({
+      baseURL: chrome.extension.getURL('/'), // Hent den merkelige hash-URL-en til utvidelsen. Sjekk Chrome dev tools!
+      packages: {
+        'app': {
+            defaultExtension: 'js'
+        }
+      }
+    })
+    
+    System.import('app/hello').then(process => process.main());
+    ```
+
+3. Nytt entry point: Omdøp `src/contentScript.ts` til `src/hello.ts` (og tilsvarende med .spec.ts-fila)
+4. Installer gulp-concat: `npm install --save-dev gulp-concat`
+5. Ny gulp-task: "loader", og endre på "build"-oppgaven til å kjøre den:
+
+    ```javacsript
+    import concat = require('gulp-concat');
+    
+    gulp.task('loader', ['compile'], () => {
+      return gulp.src(['node_modules/systemjs/dist/system.src.js', 'system.loader.js'])
+        .pipe(concat('contentScript.js'))
+        .pipe(gulp.dest('build'));
+    });
+    
+    gulp.task('build', ['compile', 'manifest', 'resources', 'loader']);
+    ```
 
 ### 4. Sette opp enhetstester
 
@@ -187,6 +300,7 @@ Vi vil så absolutt bruke Typescript sitt modulsystem.
 * Bruk `gulp watch` under utvikling for å validere at testene kjører
 * TODO: lim inn kodesnutt etter kodesnutt
 * Legg til i maniest: `web_accessible_resources`
+* Test utvidelsen på et spørsmål: http://stackoverflow.com/a/2612815
 
 ### 6. Pakking av utvidelsen
 
