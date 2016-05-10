@@ -118,10 +118,12 @@ Presentasjonen består av å bygge denne utvidelsen live.
 
 ### 2. De første filene: den første kildefila og alt det andre
 
-1. git init
+1. Opprett et git-repository: `git init`
 2. Husk .gitignore!
 
    ```gitignore
+   # .gitignore
+   
    dist/
    build/
    node_modules/
@@ -129,8 +131,8 @@ Presentasjonen består av å bygge denne utvidelsen live.
    typings/
    ``` 
 
-3. npm init
-4. manifest.json
+3. Opprett en npm-pakke: `npm init`
+4. Lag et Chrome Extension-manifest i `manifest.json`:
 
     ```json
     {
@@ -152,6 +154,8 @@ Presentasjonen består av å bygge denne utvidelsen live.
 5. src/contentScript.ts
 
     ```javascript
+    // src/contentScript.ts
+    
     var hello = document.createElement('p');
     hello.textContent = 'Hello CDU!';
     document.body.appendChild(hello);
@@ -160,6 +164,8 @@ Presentasjonen består av å bygge denne utvidelsen live.
 6. src/contentScript.spec.ts (????? -- ;)...)
 
     ```javascript
+    // src/contentScript.spec.ts
+    
     // TODO: test applikasjonen! (husk å late som at du skrev testene først)
     ```
     
@@ -196,6 +202,8 @@ Presentasjonen består av å bygge denne utvidelsen live.
 3. Gulpfile.ts med typescript.transpile();
     
     ```javascript
+    // gulpfile.js
+    
     let typescript = require('typescript');
     let fs = require('fs');
     let gulpfile = fs.readFileSync('./gulpfile.ts').toString();
@@ -210,6 +218,8 @@ Presentasjonen består av å bygge denne utvidelsen live.
   + clean
   
    ```typescript
+   // gulpfile.ts
+   
    import gulp = require('gulp');
    import del = require('del');
    import sourcemaps = require('gulp-sourcemaps');
@@ -257,9 +267,11 @@ Presentasjonen består av å bygge denne utvidelsen live.
 Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem som nettleseren støtter, siden Chrome-utvidelser kjører i nettleseren. SystemJS gir svaret: "universell modullaster for JavaScript". Vanligvis brukes SystemJS med at bibiolteket lastes først i en browser, også kjøres en konfigurasjon, før den første fila lastes og kjøres ved hjelp av `System.import()`. Vi kan konkattenere disse tre stegene til en JavaScript-fil ved hjelp av en gulptask. Vi ender dermed opp med en ny fil som entry-point til content-scriptet vårt.
  
 1. Installer SystemJS: `npm install --save system.js`
-2. Ny fil som kan konfe SystemJS og laste applikasjonen:
+2. Ny fil som kan konfe SystemJS til å bruke en pakke som vi kaller "app" og laste applikasjonen:
 
     ```javascript
+    // system.loader.js
+    
     System.config({
       baseURL: chrome.extension.getURL('/'), // Hent den merkelige hash-URL-en til utvidelsen. Sjekk Chrome dev tools!
       packages: {
@@ -272,11 +284,24 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
     System.import('app/hello').then(process => process.main());
     ```
 
-3. Nytt entry point: Omdøp `src/contentScript.ts` til `src/hello.ts` (og tilsvarende med .spec.ts-fila)
-4. Installer gulp-concat: `npm install --save-dev gulp-concat`
-5. Ny gulp-task: "loader", og endre på "build"-oppgaven til å kjøre den:
+3. Modifiser compile-oppgaven slik at den spytter ut filer til `build/app`:
 
-    ```javacsript
+    ```typescript
+    // gulpfile.ts
+    
+    gulp.task('compile, () => {
+        ...
+        .pipe(gulp.dest('build/app'));
+    });
+    ```
+
+4. Nytt entry point: Omdøp `src/contentScript.ts` til `src/hello.ts` (og tilsvarende med .spec.ts-fila)
+5. Installer gulp-concat: `npm install --save-dev gulp-concat`
+6. Ny gulp-task: "loader", og endre på "build"-oppgaven til å kjøre den:
+
+    ```typescript
+    // gulpfile.ts
+    
     import concat = require('gulp-concat');
     
     gulp.task('loader', ['compile'], () => {
