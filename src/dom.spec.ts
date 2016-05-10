@@ -11,11 +11,7 @@ describe('dom', () => {
    
    describe('craeteCodepenForm', () => {
        it('should return a form', () => {
-           expect(dom.createCodepenForm("Python", 
-`a = 10
-b = 20
-print(a + b)`
-           ).tagName).to.equal("FORM");
+           expect(dom.createCodepenForm("Python", `a = "hei"`).tagName).to.equal("FORM");
        });
        
        it('should contain form values for language and code', () => {

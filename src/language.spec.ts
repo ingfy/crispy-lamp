@@ -1,17 +1,18 @@
 import {expect} from 'chai';
 
+import {createElement} from './dom';
 import * as language from './language';
 
 describe('language', () => {
-    describe('getCodepenLanguageFromStackOverflowClass', () => {
-        it('should return null value when no language is found', () => {
-            expect(language.getCodepenLanguageFromStackOverflowClass(["lang-unknown"])).to.be.null;
+    describe('getLanguage', () => {
+        it('should not crash on elements without classes', () => {
+            var e = createElement('pre');            
+            expect(() => language.getLanguage(e)).to.not.throw();
         });
         
-        it('should find the language no matter the order of classes', () => {
-            let input = ["dummy-class", "lang-cpp"];
-            let output = language.getCodepenLanguageFromStackOverflowClass(input);
-            expect(output).to.equal("C++");
-        });
+        it('should map the class to a Codepen language', () => {
+            var e = createElement('pre', {"class": "lang-cpp"});
+            expect(language.getLanguage(e)).to.equal("C++");
+        });        
     });
 });

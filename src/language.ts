@@ -1,5 +1,3 @@
-import {find} from "./utils";
-
 var languageClasses = {
     'lang-php': 'PHP',
     'lang-py': 'Python',
@@ -13,9 +11,12 @@ var languageClasses = {
     'lang-ocaml': 'Ocaml'
 };
 
-export function getCodepenLanguageFromStackOverflowClass(classes: string[]): string {    
-    var langClass = find(classes, _class => !!find(Object.keys(languageClasses), lang => lang === _class));
-    var lang = langClass && languageClasses[langClass];
+export function getLanguage(element: HTMLElement): string {
+    for (let soClass of element.className.split(" ")) {
+        let lang = languageClasses[soClass];
+        
+        if (lang) return lang;
+    }   
     
-    return lang;
+    return null;
 }
