@@ -114,57 +114,57 @@ Vi starter oppsettet av applikasjonen med det vanlige: sette opp et git-repo og 
 3. Opprett en npm-pakke: `npm init`
 4. Lag et Chrome Extension-manifest i `manifest.json`:
 
-      ```json
-      {
-        "name": "<navn>",
-        "description": "<beskrivelse>",
-        "version": "0.0.1",
-        "manifest_version": 2,
-        "permissions": [],
-        "icons": {
-          "128": "resources/icon128.png"
-        },
-        "content_scripts": [{
-            "matches": ["*://*.stackoverflow.com/*"],
-            "js": ["contentScript.js"]
-        }]
-      }
-      ```
+    ```json
+    {
+      "name": "<navn>",
+      "description": "<beskrivelse>",
+      "version": "0.0.1",
+      "manifest_version": 2,
+      "permissions": [],
+      "icons": {
+        "128": "resources/icon128.png"
+      },
+      "content_scripts": [{
+        "matches": ["*://*.stackoverflow.com/*"],
+        "js": ["contentScript.js"]
+      }]
+    }
+    ```
     
 5. Lag en `typescript.json` for å deklarere kompileringen av Typescript i prosjektet. Vi targeter ES5 siden det kjører i Chrome.
     
-      ```json
-      {
-        "compilerOptions": {
-          "target": "es5",
-          "outDir": "build",
-          "sourceMap": false,
-          "noImplicitAny": false
-        },
-        "exclude": [
-          "node_modules",
-          "build"
-        ]
-      }
-      ```
+    ```json
+    {
+      "compilerOptions": {
+        "target": "es5",
+        "outDir": "build",
+        "sourceMap": false,
+        "noImplicitAny": false
+      },
+      "exclude": [
+        "node_modules",
+        "build"
+      ]
+    }
+    ```
   
 6. src/contentScript.ts
 
-      ```javascript
-      // src/contentScript.ts
-      
-      var hello = document.createElement('p');
-      hello.textContent = 'Hello CDU!';
-      document.body.appendChild(hello);
-      ```
+    ```javascript
+    // src/contentScript.ts
+    
+    var hello = document.createElement('p');
+    hello.textContent = 'Hello CDU!';
+    document.body.appendChild(hello);
+    ```
     
 7. src/contentScript.spec.ts (????? -- ;)...)
 
-      ```javascript
-      // src/contentScript.spec.ts
-      
-      // TODO: test applikasjonen! (husk å late som at du skrev testene først)
-      ```
+    ```javascript
+    // src/contentScript.spec.ts
+    
+    // TODO: test applikasjonen! (husk å late som at du skrev testene først)
+    ```
     
 8. Ikonet vårt! https://githyb.com/ingfy/crispy-lamp/resources/icon128.png
 9. Bygg ts-fila manuelt via VS Code og lag pakke manuelt.
@@ -176,68 +176,68 @@ Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett
 
 1. Legg til `gulpfile.ts` i "exclude" i typescript.json:
 
-      ```json
-      {
-        "...": "...",
-        "exclude": ["gulpfile.ts", "..."]
-      }
-      ```
+    ```json
+    {
+      "...": "...",
+      "exclude": ["gulpfile.ts", "..."]
+    }
+    ```
 2. Installere gulp og de pluginene vi trenger:
 
-      ```bash
-      $ npm install -g gulp typescript
-      $ npm install --save-dev typescript gulp del gulp-sourcemaps gulp-typescript
-      ``` 
+    ```bash
+    $ npm install -g gulp typescript
+    $ npm install --save-dev typescript gulp del gulp-sourcemaps gulp-typescript
+    ``` 
     
 3. Lag en gulpfile.js som kjører en gulpfile.ts med typescript.transpile();
     
-      ```javascript
-      // gulpfile.js
-      
-      let typescript = require('typescript');
-      let fs = require('fs');
-      let gulpfile = fs.readFileSync('./gulpfile.ts').toString();
-      eval(typescript.transpile(gulpfile));
-      ```
+    ```javascript
+    // gulpfile.js
+    
+    let typescript = require('typescript');
+    let fs = require('fs');
+    let gulpfile = fs.readFileSync('./gulpfile.ts').toString();
+    eval(typescript.transpile(gulpfile));
+    ```
     
 4. Opprett en gulpfile.ts med must-have gulpoppgaver: compile, build (default), resources, manifest, clean og watch:
   
-      ```typescript
-      // gulpfile.ts
+    ```typescript
+    // gulpfile.ts
 
-      import gulp = require('gulp');
-      import del = require('del');
-      import sourcemaps = require('gulp-sourcemaps');
-      import typescript = require('gulp-typescript');
-      import fs = require('fs');
+    import gulp = require('gulp');
+    import del = require('del');
+    import sourcemaps = require('gulp-sourcemaps');
+    import typescript = require('gulp-typescript');
+    import fs = require('fs');
 
-      gulp.task('compile', () => {
-          let project = typescript.createProject('tsconfig.json');
-          
-          return project.src()
-              .pipe(sourcemaps.init())
-              .pipe(typescript(project))
-              .pipe(sourcemaps.write({sourceRoot: './src'}))
-              .pipe(gulp.dest('build'));
-      });
+    gulp.task('compile', () => {
+        let project = typescript.createProject('tsconfig.json');
+        
+        return project.src()
+          .pipe(sourcemaps.init())
+          .pipe(typescript(project))
+          .pipe(sourcemaps.write({sourceRoot: './src'}))
+          .pipe(gulp.dest('build'));
+    });
 
-      gulp.task('manifest', () => {
-          return gulp.src('manifest.json')
-              .pipe(gulp.dest('build'));
-      });
+    gulp.task('manifest', () => {
+        return gulp.src('manifest.json')
+          .pipe(gulp.dest('build'));
+    });
 
-      gulp.task('resources', () => {
-          return gulp.src('resources/**/*')
-              .pipe(gulp.dest('build/resources'));
-      });
-      gulp.task('build', ['compile', 'manifest', 'resources']);
+    gulp.task('resources', () => {
+        return gulp.src('resources/**/*')
+          .pipe(gulp.dest('build/resources'));
+    });
+    gulp.task('build', ['compile', 'manifest', 'resources']);
 
-      gulp.task('clean', cb => del.sync(['build']));
+    gulp.task('clean', cb => del.sync(['build']));
 
-      gulp.task('watch', () => gulp.watch("src/**/*", ['build']));
+    gulp.task('watch', () => gulp.watch("src/**/*", ['build']));
 
-      gulp.task('default', ['build']);
-      ```
+    gulp.task('default', ['build']);
+    ```
   
 5. Hvorfor må vi bruke en merkelig måte på å transpilere gulpfila?
 6. Starte med typings. Typings er et program som lar oss laste ned og holde styr på typedeklarasjoner som Typescript kan bruke.
@@ -254,58 +254,58 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
 1. Installer SystemJS: `npm install --save system.js`
 2. Ny fil som kan konfe SystemJS til å bruke en pakke som vi kaller "app" og laste applikasjonen:
 
-      ```javascript
-      // system.loader.js
-      
-      System.config({
-        baseURL: chrome.extension.getURL('/'), // Hent den merkelige hash-URL-en til utvidelsen. Sjekk Chrome dev tools!
-        packages: {
-          'app': {
-              defaultExtension: 'js'
-          }
+    ```javascript
+    // system.loader.js
+    
+    System.config({
+      baseURL: chrome.extension.getURL('/'), // Hent den merkelige hash-URL-en til utvidelsen. Sjekk Chrome dev tools!
+      packages: {
+        'app': {
+          defaultExtension: 'js'
         }
-      })
-      
-      System.import('app/hello').then(process => process.main());
-      ```
+      }
+    })
+    
+    System.import('app/hello').then(process => process.main());
+    ```
 
 3. Modifiser compile-oppgaven slik at den spytter ut filer til `build/app`:
 
-      ```typescript
-      // gulpfile.ts
-      
-      gulp.task('compile, () => {
-          //...
-          .pipe(gulp.dest('build/app'));
-      });
-      ```
+    ```typescript
+    // gulpfile.ts
+    
+    gulp.task('compile, () => {
+        //...
+        .pipe(gulp.dest('build/app'));
+    });
+    ```
 
 4. Nytt entry point: Omdøp `src/contentScript.ts` til `src/hello.ts` (og tilsvarende med .spec.ts-fila)
 5. Installer gulp-concat: `npm install --save-dev gulp-concat`
 6. Ny gulp-task: "loader", og endre på "build"-oppgaven til å kjøre den:
 
-      ```typescript
-      // gulpfile.ts
-      
-      import concat = require('gulp-concat');
-      
-      gulp.task('loader', ['compile'], () => {
-        return gulp.src(['node_modules/systemjs/dist/system.src.js', 'system.loader.js'])
-          .pipe(concat('contentScript.js'))
-          .pipe(gulp.dest('build'));
-      });
-      
-      gulp.task('build', ['compile', 'manifest', 'resources', 'loader']);
-      ```
+    ```typescript
+    // gulpfile.ts
+    
+    import concat = require('gulp-concat');
+    
+    gulp.task('loader', ['compile'], () => {
+      return gulp.src(['node_modules/systemjs/dist/system.src.js', 'system.loader.js'])
+        .pipe(concat('contentScript.js'))
+        .pipe(gulp.dest('build'));
+    });
+    
+    gulp.task('build', ['compile', 'manifest', 'resources', 'loader']);
+    ```
     
 7. Utvid manifestet `manifest.json` til å deklarere alle javascript-filene i "app"-pakken som tilgjengelige via XHR:
 
-      ```json
-      {
-        "...": "...",
-        "web_accessible_resources": ["app/*.js"]
-      }
-      ```
+    ```json
+    {
+      "...": "...",
+      "web_accessible_resources": ["app/*.js"]
+    }
+    ```
     
 
 ### 4. Sette opp enhetstester
@@ -314,117 +314,118 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
 
 0. Skriv en test for `hello.ts`:
 
-      ```typescript
-      // src/hello.spec.ts
-      
-      import {expect} from 'chai';
+    ```typescript
+    // src/hello.spec.ts
+    
+    import {expect} from 'chai';
 
-      import * as hello from './hello';
+    import * as hello from './hello';
 
-      describe('hello', () => {
-        describe('main()', () => {
-          it('should greet the people', () => {
-            hello.main();
-            expect(document.querySelector('p').textContent).to.match(/hello/gi);
-          });
+    describe('hello', () => {
+      describe('main()', () => {
+        it('should greet the people', () => {
+        hello.main();
+        expect(document.querySelector('p').textContent).to.match(/hello/gi);
         });
       });
-      ```
+    });
+    ```
 
 1. Installer Mocha, Chai, Karma, PhantomJS og avhengigheter:
 
-      ```bash
-      $ npm install --save-dev karma karma-mocha chai karma-mocha-reporter karma-phantomjs-launcher karma-systemjs
-      ```
+    ```bash
+    $ npm install --save-dev karma karma-mocha chai karma-mocha-reporter karma-phantomjs-launcher karma-systemjs
+    ```
     
 2. Konfigurer karma til å bruke Mocha og PhantomJS, og å hente opp kompilerte filer:
 
-      ```javascript
-      // karma.conf.js
-      
-      'use strict';
+    ```javascript
+    // karma.conf.js
+    
+    'use strict';
 
-      module.exports = config => {
-        config.set({
-          basePath: './',        
-          frameworks: ['mocha'],
-          plugins: [
-            'karma-mocha', 
-            'karma-phantomjs-launcher',
-            'karma-mocha-reporter'
-          ],
-          files: [
-            {pattern: 'build/*.js', incldued: false, watched: true},
-            {pattern: 'build/**/*.js', incldued: false, watched: true},
-            {pattern: 'build/*.spec.js', included: true, watched: true},
-            {pattern: 'build/**/*.spec.js', included: true, watched: true}
-          ],
-          exclude: [
-            'build/contentScript.js'
-          ],
-          reporters: ['mocha'],
-          port: 9876,
-          colors: true,
-          logLevel: config.LOG_WARN,
-          autoWatch: true,
-          browsers: ['PhantomJS'],
-          singleRun: true
-        });
-      };
-      ```
+    module.exports = config => {
+      config.set({
+        basePath: './',        
+        frameworks: ['mocha'],
+        plugins: [
+          'karma-mocha', 
+          'karma-phantomjs-launcher',
+          'karma-mocha-reporter'
+        ],
+        files: [
+          {pattern: 'build/*.js', incldued: false, watched: true},
+          {pattern: 'build/**/*.js', incldued: false, watched: true},
+          {pattern: 'build/*.spec.js', included: true, watched: true},
+          {pattern: 'build/**/*.spec.js', included: true, watched: true}
+        ],
+        exclude: [
+          'build/contentScript.js'
+        ],
+        reporters: ['mocha'],
+        port: 9876,
+        colors: true,
+        logLevel: config.LOG_WARN,
+        autoWatch: true,
+        browsers: ['PhantomJS'],
+        singleRun: true
+      });
+    };
+    ```
 
 3. Konfigurer Karma til å bruke SystemJS, og PhantomJS, og la filer hente opp chai gjennom systemjs konfig, ved å merge inn følgende konfigurasjon for SystemJS:
 
-      ```javascript
-      // karma.conf.js
-      
-      ...      
-        frameworks: ['systemjs', ...],
-        plugins: ['karma-systemjs', ...],
-        systemjs: {
-          config: {
-            transpiler: null,
-            paths: {
-              'systemjs': 'node_modules/systemjs/dist/system.js',
-              'chai': 'node_modules/chai/chai.js'
-            },
-            packages: {
-              'build/app': {
-                  defaultExtension: 'js'
-              }
-            }
+    ```javascript
+    // karma.conf.js
+    
+    ...      
+      frameworks: ['systemjs', ...],
+      plugins: ['karma-systemjs', ...],
+      systemjs: {
+        config: {
+          transpiler: null,
+          paths: {
+            'systemjs': 'node_modules/systemjs/dist/system.js',
+            'chai': 'node_modules/chai/chai.js'
           },
-          serveFiles: [
-            'node_modules/**/*.js',
-            'build/**/*.js'
-          ]
+          packages: {
+            'build/app': {
+                defaultExtension: 'js'
+            }
+          }
         },
-      ...
-      
-      ```
+        serveFiles: [
+          'node_modules/**/*.js',
+          'build/**/*.js'
+        ]
+      },
+    ...
+    
+    ```
 
 4. Kjør karma direkte og test: `.\node_modules\.bin\karma start`
 5. Lag gulp-tasker for å starte karma og watche:
 
-      ```typescript
-      // gulpfile.ts
-          
-      import {Server as KarmaServer} from 'karma';
-      
-      function runKarma(singleRun: boolean, cb?: () => void) {    
-        new KarmaServer({
-          configFile: __dirname + '/karma.conf.js',
-          singleRun: singleRun
-        }, cb).start();
-      }
-      
-      gulp.task('test', ['build'], cb => runKarma(true, cb));
-      gulp.task('test-watch', cb => runKarma(false, cb));    
-      gulp.task('watch', () => {
-        gulp.watch("src/**/*", ['build']);
-        runKarma(false);
-      });
-      ```
+    ```typescript
+    // gulpfile.ts
+        
+    import {Server as KarmaServer} from 'karma';
+    
+    function runKarma(singleRun: boolean, cb?: () => void) {    
+      new KarmaServer({
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: singleRun
+      }, cb).start();
+    }
+    
+    gulp.task('test', ['build'], cb => runKarma(true, cb));
+    gulp.task('test-watch', cb => runKarma(false, cb));    
+    gulp.task('watch', () => {
+      gulp.watch("src/**/*", ['build']);
+      runKarma(false);
+    });
+    ```
+    
 6. Kjør testene fra gulp med `gulp test`!
 
 ### 5. Programmere utvidelsen med watch kjørende
@@ -476,6 +477,7 @@ Tid for å utvikle selve funksjonaliteten til utvidelsen, og ta i bruk Typescrip
         ```
   
   c. Deretter skriver vi implementasjonen, med god hjelp av Typescript sitt typesystem:
+  
         ```typescript
         // src/dom.ts
         
@@ -519,139 +521,135 @@ Tid for å utvikle selve funksjonaliteten til utvidelsen, og ta i bruk Typescrip
           return <T>element;
         }
         ```
+        
 3. Vi trenger en modul som tolker klassene fra et StackOverflow `<pre>`-element og gir oss språk-navn som Codepad kan tolke.
   a. Vi oppretter `language.ts` med signaturen vi trenger:
     
-      ```typescript
-      // src/language.ts
-      export function getLanguage(element: HTMLElement): string {}
-      ```
+    ```typescript
+    // src/language.ts
+    export function getLanguage(element: HTMLElement): string {}
+    ```
     
   b. Vi oppretter `language.spec.ts` og skriver en test for å verifisere funksjonaliteten:
       
-      ```typescript
-      // src/language.spec.ts
-      
-      import {expect} from 'chai';
+    ```typescript
+    // src/language.spec.ts
+    
+    import {expect} from 'chai';
 
-      import {createElement} from './dom';
-      import * as language from './language';
+    import {createElement} from './dom';
+    import * as language from './language';
 
-      describe('language', () => {
-        describe('getLanguage', () => {
-          it('should not crash on elements without classes', () => {
-            var e = createElement('pre');            
-            expect(() => language.getLanguage(e)).to.not.throw();
-          });
-          
-          it('should map the class to a Codepen language', () => {
-            var e = createElement('pre', {'class': 'lang-cpp'});
-            expect(language.getLanguage(e)).to.equal('C++');
-          });        
+    describe('language', () => {
+      describe('getLanguage', () => {
+        it('should not crash on elements without classes', () => {
+          var e = createElement('pre');            
+          expect(() => language.getLanguage(e)).to.not.throw();
         });
+        
+        it('should map the class to a Codepen language', () => {
+          var e = createElement('pre', {'class': 'lang-cpp'});
+          expect(language.getLanguage(e)).to.equal('C++');
+        });        
       });
-      ```
+    });
+    ```
       
   c. Vi fyller inn `language.ts` med funkjsonalitet for å tolke programmeringsspråk:
   
-      ```typescript
-      // src/language.ts
-      
-      var languageClasses = {
-        'lang-php': 'PHP',
-        'lang-py': 'Python',
-        'lang-cpp': 'C++',
-        'lang-c': 'C',
-        'lang-d': 'D',
-        'lang-perl': 'Prel',
-        'lang-scheme': 'Scheme',
-        'lang-lua': 'Lua',
-        'lang-haskell': 'Haskell',
-        'lang-ocaml': 'Ocaml'
-      };
+    ```typescript
+    // src/language.ts
+    
+    var languageClasses = {
+      'lang-php': 'PHP',
+      'lang-py': 'Python',
+      'lang-cpp': 'C++',
+      'lang-c': 'C',
+      'lang-d': 'D',
+      'lang-perl': 'Prel',
+      'lang-scheme': 'Scheme',
+      'lang-lua': 'Lua',
+      'lang-haskell': 'Haskell',
+      'lang-ocaml': 'Ocaml'
+    };
 
-      export function getLanguage(element: HTMLElement): string {
-        for (let soClass of element.className.split(" ")) {
-          let lang = languageClasses[soClass];
-          
-          if (lang) return lang;
-        }   
+    export function getLanguage(element: HTMLElement): string {
+      for (let soClass of element.className.split(" ")) {
+        let lang = languageClasses[soClass];
         
-        return null;
-      }
-      ```
+        if (lang) return lang;
+      }   
+      
+      return null;
+    }
+    ```
       
 4. Til slutt trenger vi en hovedmodul som tolker StackOverflow-siden og legger inn knapper.
   a. Vi oppretter `processStackOverflow.ts` og definerer signaturene vi trenger:
   
-      ```typescript
-      // src/processStackOverflow.ts
-      
-      export function addOpenButton(codeElement: Element) {}
-      export function main() {}
-      ```
+    ```typescript
+    // src/processStackOverflow.ts
+    
+    export function addOpenButton(codeElement: Element) {}
+    export function main() {}
+    ```
       
   b. Vi skriver enhetstester i `processStackOverflow.spec.ts` for å spesifisere funksjonaliteten. Vi tester mot HTML-en til en ekte post som vi finner på StackOverflow: http://stackoverflow.com/a/53522
     
-      ```typescript
-      // src/processStackOverflow.spec.ts
-      import {expect} from 'chai';
+    ```typescript
+    // src/processStackOverflow.spec.ts
+    import {expect} from 'chai';
 
-      import * as processStackOverflow from './processStackOverflow';
+    import * as processStackOverflow from './processStackOverflow';
 
-      describe('processStackOverflow', () => {
-        describe('addOpenButton', () => {
-          var dummyPost;
-          
-          beforeEach(() => {
-            dummyPost = document.createElement('div');
-            dummyPost.innerHTML = `<div class="post-text" itemprop="text">
-<pre class="lang-py prettyprint prettyprinted"><code><span class="kwd">if</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> a</span><span class="pun">:</span><span class="pln">
-  </span><span class="kwd">print</span><span class="pln"> </span><span class="str">"List is empty"</span></code></pre>
-
-<p>Using the implicit booleanness of the empty list is quite pythonic.</p>
-    </div>`;
-          });
-          
-          it('should add a single form element to the post', () => {
-              processStackOverflow.addOpenButton(dummyPost.querySelector('pre code'));
-              expect(dummyPost.querySelectorAll('form').length).to.equal(1);
-          });
+    describe('processStackOverflow', () => {
+      describe('addOpenButton', () => {
+        var dummyPost;
+        
+        beforeEach(() => {
+          dummyPost = document.createElement('div');
+          dummyPost.innerHTML = '<div class="post-text" itemprop="text"><pre class="lang-py prettyprint prettyprinted"><code><span class="kwd">if</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> a</span><span class="pun">:</span><span class="pln"></span><span class="kwd">print</span><span class="pln"> </span><span class="str">"List is empty"</span></code></pre><p>Using the implicit booleanness of the empty list is quite pythonic.</p></div>';
+        });
+        
+        it('should add a single form element to the post', () => {
+            processStackOverflow.addOpenButton(dummyPost.querySelector('pre code'));
+            expect(dummyPost.querySelectorAll('form').length).to.equal(1);
         });
       });
-      ```
+    });
+    ```
       
   c. Vi skriver funksjonaliteten:
   
-      ```typescript
-      // src/processStackOverflow.ts
-      import {getLanguage} from './language';
-      import {createCodepenForm} from './dom';
+    ```typescript
+    // src/processStackOverflow.ts
+    import {getLanguage} from './language';
+    import {createCodepenForm} from './dom';
 
-      export function addOpenButton(codeElement: Element) {
-        let pre = codeElement.parentElement;
-        let lang = getLanguage(pre);
+    export function addOpenButton(codeElement: Element) {
+      let pre = codeElement.parentElement;
+      let lang = getLanguage(pre);
 
-        if (!lang) return;
+      if (!lang) return;
 
-        pre.parentElement.insertBefore(createCodepenForm(lang, codeElement.textContent), pre);
+      pre.parentElement.insertBefore(createCodepenForm(lang, codeElement.textContent), pre);
+    }
+
+    export function main() {
+      for (var node of Array.prototype.slice.call(document.querySelectorAll('pre code'))) {
+        addOpenButton(node);
       }
-
-      export function main() {
-        for (var node of Array.prototype.slice.call(document.querySelectorAll('pre code'))) {
-          addOpenButton(node);
-        }
-      }
-      ```
+    }
+    ```
       
 5. Siden vi har laget en ny modul som skal være hovedmodulen må vi bytte entrypunkt i `system.loader.js`:
   
-      ```javascript
-      // system.loader.js
-      
-      //...
-      System.import('app/processStackOverflow').then(process => process.main());
-      ```
+    ```javascript
+    // system.loader.js
+    
+    //...
+    System.import('app/processStackOverflow').then(process => process.main());
+    ```
       
 6. Åpne [Google Chrome Extensions-siden](chrome://extensions), reload utvidelsen og sjekk StackOverflow! Test utvidelsen på et spørsmål: http://stackoverflow.com/a/2612815
 
@@ -662,34 +660,35 @@ For å automatisk pakke utvidelsen for publisering kan vi lage en "zip"-oppgave 
 1. Vi trenger avhengigheten gulp-zip: `npm install --save-dev gulp-zip`
 2. Skriv en typing for 'gulp-zip', for det vi trenger:
 
-      ```typescript
-      // custom-typings/gulp-zip.d.ts
+    ```typescript
+    // custom-typings/gulp-zip.d.ts
+    
+    declare module 'gulp-zip' {
+      function zip(filename: string): NodeJS.ReadWriteStream;
       
-      declare module 'gulp-zip' {
-        function zip(filename: string): NodeJS.ReadWriteStream;
-        
-        export = zip;
-      }
-      ```
+      export = zip;
+    }
+    ```
   
 3. Legg inn en referanse til typingen og opprett tasken:
 
-      ```typescript      
-      // gulpfile.ts
-      /// <reference path="./custom-typings/gulp-zip.d.ts" />
+    ```typescript    
+    // gulpfile.ts
+    /// <reference path="./custom-typings/gulp-zip.d.ts" />
+    
+    import zip = require('gulp-zip');
+    
+    // ...
+    
+    gulp.task('zip', ['build'], () => {
+      let manifest = JSON.parse(fs.readFileSync('build/manifest.json').toString());
+      let packageName = `${manifest.name} v${manifest.version}`;
+      let packageFileName = `${packageName}.zip`;
       
-      import zip = require('gulp-zip');
-      
-      // ...
-      
-      gulp.task('zip', ['build'], () => {
-        let manifest = JSON.parse(fs.readFileSync('build/manifest.json').toString());
-        let packageName = `${manifest.name} v${manifest.version}`;
-        let packageFileName = `${packageName}.zip`;
-        
-        return gulp.src('build/**/*')
-          .pipe(zip(packageName))
-          .pipe(gulp.dest('dist'));
-      });
-      ```
+      return gulp.src('build/**/*')
+        .pipe(zip(packageName))
+        .pipe(gulp.dest('dist'));
+    });
+    ```
+  
 4. Kjør `gulp zip` for å lage en pakke, som havner i `dist/`!
