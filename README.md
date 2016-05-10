@@ -216,6 +216,7 @@ Presentasjonen består av å bygge denne utvidelsen live.
   + resources
   + manifest
   + clean
+  + watch
   
    ```typescript
    // gulpfile.ts
@@ -315,17 +316,122 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
 
 ### 4. Sette opp enhetstester
 
-Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headless? Vi bruker testrammeverket Mocha og assertion-bibioteket chai fordi det er enkelt. Vi kjører mocha gjennom Karma, som setter opp en "hodeløs" nettleser som heter PhantomJS. Dermed kan vi teste kode i kontekst av en nettleser--slik som utvidelsen (som er et innholdsscript) vil kjøre.  
+Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headless? Vi bruker testrammeverket Mocha og assertion-bibioteket chai fordi det er enkelt. Vi kjører Mocha gjennom Karma, som setter opp en "hodeløs" nettleser som heter PhantomJS. Dermed kan vi teste kode i kontekst av en nettleser--slik som utvidelsen (som er et innholdsscript) vil kjøre.  
 
-1. Installer mocha, chai, karma, PhantomJS og avhengigheter:
+0. Skriv en test for `hello.ts`:
 
-    ```bash
-    npm install --save-dev karma karma-mocha karma-chai karma-mocha-reporter karma-phantomjs-launcher karma-systemjs
+    ```typescript
+    // src/hello.spec.ts
+    
+    import {expect} from 'chai';
+
+    import * as hello from './hello';
+
+    describe('hello', () => {
+      describe('main()', () => {
+        it('should greet the people', () => {
+          hello.main();
+          expect(document.querySelector('p').textContent).to.match(/hello/gi);
+        });
+      });
+    });
     ```
 
-* Testrammeverk: Mocha
-* Assertions: Chai
-* Karma: velkommen til confighelvete
+1. Installer Mocha, Chai, Karma, PhantomJS og avhengigheter:
+
+    ```bash
+    npm install --save-dev karma karma-mocha chai karma-mocha-reporter karma-phantomjs-launcher karma-systemjs
+    ```
+    
+2. Konfigurer karma til å bruke Mocha og PhantomJS, og å hente opp kompilerte filer:
+
+    ```javascript
+    // karma.conf.js
+    
+    'use strict';
+
+    module.exports = config => {
+      config.set({
+        basePath: './',        
+        frameworks: ['mocha'],
+        plugins: [
+          'karma-mocha', 
+          'karma-phantomjs-launcher',
+          'karma-mocha-reporter'
+        ],
+        files: [
+          {pattern: 'build/*.js', incldued: false, watched: true},
+          {pattern: 'build/**/*.js', incldued: false, watched: true},
+          {pattern: 'build/*.spec.js', included: true, watched: true},
+          {pattern: 'build/**/*.spec.js', included: true, watched: true}
+        ],
+        exclude: [
+          'build/contentScript.js'
+        ],
+        reporters: ['mocha'],
+        port: 9876,
+        colors: true,
+        logLevel: config.LOG_WARN,
+        autoWatch: true,
+        browsers: ['PhantomJS'],
+        singleRun: true
+      });
+    };
+    ```
+
+3. Konfigurer Karma til å bruke SystemJS, og PhantomJS, og la filer hente opp chai gjennom systemjs konfig, ved å merge inn følgende konfigurasjon for SystemJS:
+
+    ```javascript
+    // karma.conf.js
+    
+    ...      
+      frameworks: ['systemjs', ...],
+      plugins: ['karma-systemjs', ...],
+      systemjs: {
+        config: {
+          transpiler: null,
+          paths: {
+            'systemjs': 'node_modules/systemjs/dist/system.js',
+            'chai': 'node_modules/chai/chai.js'
+          },
+          packages: {
+            'build/app': {
+                defaultExtension: 'js'
+            }
+          }
+        },
+        serveFiles: [
+          'node_modules/**/*.js',
+          'build/**/*.js'
+        ]
+      },
+    ...
+    
+    ```
+
+4. Kjør karma direkte og test: `.\node_modules\.bin\karma start`
+5. Lag gulp-tasker for å starte karma og watche:
+
+    ```typescript
+    // gulpfile.ts
+        
+    import {Server as KarmaServer} from 'karma';
+    
+    function runKarma(singleRun: boolean, cb?: () => void) {    
+      new KarmaServer({
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: singleRun
+      }, cb).start();
+    }
+    
+    gulp.task('test', ['build'], cb => runKarma(true, cb));
+    gulp.task('test-watch', cb => runKarma(false, cb));    
+    gulp.task('watch', () => {
+      gulp.watch("src/**/*", ['build']);
+      runKarma(false);
+    });
+    ```
+6. Kjør testene fra gulp med `gulp test`!
 
 ### 5. Programmere utvidelsen med watch kjørende
 

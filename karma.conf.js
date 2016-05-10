@@ -10,8 +10,7 @@ module.exports = config => {
             'karma-mocha', 
             'karma-phantomjs-launcher',
             'karma-mocha-reporter'
-        ],
-        
+        ],        
         systemjs: {
             config: {
                 transpiler: null,
