@@ -1,18 +1,31 @@
 # ts-talk
 
-Unit-tested Typescript-written Chrome Extension
+Dette prosjektet er en nettleserutvidelse til Google Chrome skrevet i Typescript, med enhetstester. Nettleserutvidelsen legger til "kjør kode"-funksjonalitet på StackOverflow-kodesnutter, som åpner et nytt nettleservindu med Codepad.org og koden limt inn. Poenget med prosjektet er en presentasjon for Ciber Developer Update i mai 2016 (CDU).
 
-For fun =) 
-
-StackOverflow provides useful code snippets. But sometimes you want to run them!
+Hovedfokuset med prosjektet og presentasjonen er den underliggende teknologien, altså Typescript,gulp og enhetstesting med karma og PhantomJS, og ikke det faktum at produktet er en Chrome-utvidelse.
 
 ## Codepad.org
 
-[Codepad](http://codepad.org/) er en side der man kan kjøre små kodesnutter i forskjellige språk, og lage "pastes", dvs. lenker til koden man kan dele med andre. Vår utvidelse kan bruke denne siden til å støtte kjøring av kodesnutter på nettsider.
+[Codepad](http://codepad.org/) er en side der man kan kjøre små kodesnutter i forskjellige språk, og lage "pastes", dvs. lenker til kode man kan dele med andre. Vår utvidelse kan bruke denne siden til å støtte kjøring av kodesnutter på nettsider.
 
 Heldigvis kan Codepad-hjemmesiden motta en anonym POST-spørring som inneholder skjemadata og gi tilbake en side. Vi er heldige her, siden de ikke krever noen cookie eller noe lignende for at POST-spørringen skal fungere.
 
 Det finnes mange slike sider på nettet, men Codepad er veldig enkelt å integere mot. Antallet støttede språk er dessverre ikke så høyt. 
+
+Liste over tilgjengelige språk på Codepad:
+
+* C
+* C++
+* D
+* Haskell
+* Lua
+* OCaml
+* PHP
+* Perl
+* Python
+* Ruby
+* Scheme
+* Tcl
 
 ## StackOverflow
 
@@ -35,34 +48,32 @@ Det finnes mange slike sider på nettet, men Codepad er veldig enkelt å integer
 >    submit: Submit
 >    ``` 
 
-### Tilgjgengelige språk
 
-Liste over tilgjengelige språk på Codepad:
+## Google Chrome-utvidelser
 
-* C
-* C++
-* D
-* Haskell
-* Lua
-* OCaml
-* PHP
-* Perl
-* Python
-* Ruby
-* Scheme
-* Tcl
+Chrome-utvidelser kan brukes til å legge inn funksjonalitet i selve nettleseren, og til å forbedre spesfikke nettsider. Dette gjøres ved hjelp av bakgrunns-/eventsider og innholdsscript. Eventsider kjøres i bakgrunnen og kan integrere med nettleseren, mens innholdsscript hører til en spesifikk nettside som matcher en gitt URL og har tilgang til DOM-en på den nettsiden. Siden dette prosjekter fokuserer på teknologi, vil denne utvidelsen kun inneholde et innholdsscript.
+
+En utvidelse til Chrome består av et manifest, et sett med JavaScript- og HTML-filer, og tilleggsressurser som ikoner og bilder. Alle utvidelser til Google Chrome må inneholde et manifest "`manifest.json`", som beskriver funksjonaliteten til utvidelsen og hvilke tilganger den trenger.
 
 ## Oppbygning
 
 Denne seksjonen beskriver hvordan prosjektet blir strukturert. Dette er 
 grunnmuren til presentasjonen.
 
-## Litt om Chrome-utvidelser
+Følgende rammeverk og verktøy er brukt:
 
-* Typer utvidelser: hvilke filer de støtter i konfigen, hvordan de kjøres 
-  (background page, content script, etc.)
+1. Typescript
+2. Gulp
+3. Karma
+4. Mocha
+5. PhantomJS
+6. SystemJS
 
-:)
+### Teknologien i bruk
+
+### Utviklingspipeline
+
+
 
 ### Hvordan kompilere Typescript-koden til å bli en Chrome-extension
 
@@ -80,8 +91,12 @@ browserify, hvorfor?
 
 ### Testing
 
-gulp-mocha + typescript-require
+karma + mocha + systemjs
 
 ## Filewriter? FIlesystem? webrtc/MediaStream??!?!
 
 Disse er typings som chrome-typings er avhengige av.
+
+## Manus og fremgangsmåte
+
+Presentasjonen består av å bygge denne utvidelsen live.
