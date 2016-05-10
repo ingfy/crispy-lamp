@@ -439,90 +439,90 @@ Tid for å utvikle selve funksjonaliteten til utvidelsen, og ta i bruk Typescrip
   a. Modulen `dom.ts` må eksportere en funksjon for å lage skjemaet vi skal dytte inn på siden, og vi lager en utility-funksjon for å lage et generelt element med gitte attributter. Vi eksporterer også denne funksjonen, slik at vi kan teste den. Vi definerer API-et til "dom"-modulen:
   
   
-        ```typescript
-        // src/dom.ts
-        export function createCodepenForm(language: string, code: string): HTMLFormElement {}
-        export function createElement<T extends HTMLElement>(type: string, attributes: {[key: string]: string} = {}): T {}
-        ```
+    ```typescript
+    // src/dom.ts
+    export function createCodepenForm(language: string, code: string): HTMLFormElement {}
+    export function createElement<T extends HTMLElement>(type: string, attributes: {[key: string]: string} = {}): T {}
+    ```
         
   b. I god testdrevet stil skriver vi nå tester som spesifiserer funksjonaliteten til modulen:
 
-        ```typescript
-        // src/dom.spec.ts
-        import {expect} from 'chai';
+    ```typescript
+    // src/dom.spec.ts
+    import {expect} from 'chai';
 
-        import * as dom from './dom';
+    import * as dom from './dom';
 
-        describe('dom', () => {
-          describe('createElement', () => {
-            it('should return a bare element when given no attributes', () => {
-              expect(dom.createElement('p').getAttribute('class')).to.equal(null);
-            });
-          });
-          
-          describe('craeteCodepenForm', () => {
-            it('should return a form', () => {
-              expect(dom.createCodepenForm("Python", `a = "hei"`).tagName).to.equal("FORM");
-            });
-            
-            it('should contain form values for language and code', () => {
-              let lang = "Lua";
-              let code = `print("Hello Lua World")`;
-              
-              let form = dom.createCodepenForm(lang, code);
-              
-              expect((<HTMLInputElement>form.querySelector('input[name=lang]')).value).to.equal(lang);
-              expect((<HTMLInputElement>form.querySelector('input[name=code]')).value).to.equal(code);
-            });
-          });
+    describe('dom', () => {
+      describe('createElement', () => {
+        it('should return a bare element when given no attributes', () => {
+          expect(dom.createElement('p').getAttribute('class')).to.equal(null);
         });
-        ```
+      });
+      
+      describe('craeteCodepenForm', () => {
+        it('should return a form', () => {
+          expect(dom.createCodepenForm("Python", `a = "hei"`).tagName).to.equal("FORM");
+        });
+        
+        it('should contain form values for language and code', () => {
+          let lang = "Lua";
+          let code = `print("Hello Lua World")`;
+          
+          let form = dom.createCodepenForm(lang, code);
+          
+          expect((<HTMLInputElement>form.querySelector('input[name=lang]')).value).to.equal(lang);
+          expect((<HTMLInputElement>form.querySelector('input[name=code]')).value).to.equal(code);
+        });
+      });
+    });
+    ```
   
   c. Deretter skriver vi implementasjonen, med god hjelp av Typescript sitt typesystem:
   
-        ```typescript
-        // src/dom.ts
-        
-        export function createCodepenForm(language: string, code: string): HTMLFormElement {
-          var formData = {
-            lang: language,
-            code: code,
-            run: "True",
-            submit: "Submit"
-          };
-          
-          var form = createElement<HTMLFormElement>('form', {
-            'method': 'POST',
-            'target': '_blank',
-            'action': 'http://codepad.org'
-          });
+    ```typescript
+    // src/dom.ts
+    
+    export function createCodepenForm(language: string, code: string): HTMLFormElement {
+      var formData = {
+        lang: language,
+        code: code,
+        run: "True",
+        submit: "Submit"
+      };
+      
+      var form = createElement<HTMLFormElement>('form', {
+        'method': 'POST',
+        'target': '_blank',
+        'action': 'http://codepad.org'
+      });
 
-          for (var key in formData) {
-            form.appendChild(createElement('input', {
-              'type': 'hidden',
-              'name': key,
-              'value': formData[key]
-            }));
-          }
+      for (var key in formData) {
+        form.appendChild(createElement('input', {
+          'type': 'hidden',
+          'name': key,
+          'value': formData[key]
+        }));
+      }
 
-          var submit = createElement('input', {
-            'type': 'submit',
-            'value': `Open the damn ${language} snippet in codepad!`
-          });
+      var submit = createElement('input', {
+        'type': 'submit',
+        'value': `Open the damn ${language} snippet in codepad!`
+      });
 
-          form.appendChild(submit);
-          
-          return form;
-        };
+      form.appendChild(submit);
+      
+      return form;
+    };
 
-        export function createElement<T extends HTMLElement>(type: string, attributes: {[key: string]: string} = {}): T {
-          var element = document.createElement(type);
-          for (var key in attributes) {
-            element.setAttribute(key, attributes[key]);
-          }
-          return <T>element;
-        }
-        ```
+    export function createElement<T extends HTMLElement>(type: string, attributes: {[key: string]: string} = {}): T {
+      var element = document.createElement(type);
+      for (var key in attributes) {
+        element.setAttribute(key, attributes[key]);
+      }
+      return <T>element;
+    }
+    ```
         
 3. Vi trenger en modul som tolker klassene fra et StackOverflow `<pre>`-element og gir oss språk-navn som Codepad kan tolke.
   
