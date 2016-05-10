@@ -230,6 +230,7 @@ Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett
         return gulp.src('resources/**/*')
           .pipe(gulp.dest('build/resources'));
     });
+    
     gulp.task('build', ['compile', 'manifest', 'resources']);
 
     gulp.task('clean', cb => del.sync(['build']));
@@ -324,8 +325,8 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
     describe('hello', () => {
       describe('main()', () => {
         it('should greet the people', () => {
-        hello.main();
-        expect(document.querySelector('p').textContent).to.match(/hello/gi);
+          hello.main();
+          expect(document.querySelector('p').textContent).to.match(/hello/gi);
         });
       });
     });
@@ -390,7 +391,7 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
           },
           packages: {
             'build/app': {
-                defaultExtension: 'js'
+              defaultExtension: 'js'
             }
           }
         },
@@ -434,6 +435,7 @@ Tid for å utvikle selve funksjonaliteten til utvidelsen, og ta i bruk Typescrip
 
 1. Start `gulp watch` og ha den kjørende synlig mens vi koder.
 2. Siden strategien vår er å legge inn DOM-elementer på StackOverflow-siden må vi ha kode for å opprette disse elementene. Vi starter med å lage en modul `dom.ts` og tilhørende `dom.spec.ts`.
+  
   a. Modulen `dom.ts` må eksportere en funksjon for å lage skjemaet vi skal dytte inn på siden, og vi lager en utility-funksjon for å lage et generelt element med gitte attributter. Vi eksporterer også denne funksjonen, slik at vi kan teste den. Vi definerer API-et til "dom"-modulen:
   
   
@@ -523,6 +525,7 @@ Tid for å utvikle selve funksjonaliteten til utvidelsen, og ta i bruk Typescrip
         ```
         
 3. Vi trenger en modul som tolker klassene fra et StackOverflow `<pre>`-element og gir oss språk-navn som Codepad kan tolke.
+  
   a. Vi oppretter `language.ts` med signaturen vi trenger:
     
     ```typescript
@@ -585,6 +588,7 @@ Tid for å utvikle selve funksjonaliteten til utvidelsen, og ta i bruk Typescrip
     ```
       
 4. Til slutt trenger vi en hovedmodul som tolker StackOverflow-siden og legger inn knapper.
+  
   a. Vi oppretter `processStackOverflow.ts` og definerer signaturene vi trenger:
   
     ```typescript
