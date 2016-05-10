@@ -9,27 +9,6 @@ import fs = require('fs');
 import {Server as KarmaServer} from 'karma';
 import { join } from 'path';
 import concat = require('gulp-concat');
-import glob = require('glob');
-import through = require('through2');
-
-function addWebResources(pattern: string, options) {    
-    options = options || {};
-    
-    return through.obj((file, enc, callback) => {
-        glob(pattern, (err, files) => {
-            let manifest = JSON.parse(file.contents.toString(enc));
-            if (options.ignorePath) {
-                files = files.map(file => file.replace(new RegExp(`^${options.ignorePath}/?(.*)$`), '$1'));
-            }
-            manifest.web_accessible_resources = files;
-            let json = JSON.stringify(manifest, null, 4);
-            file.contents = new Buffer(json, enc);
-            
-            callback(null, file);
-        });
-    })
-}
-
 
 gulp.task('compile', () => {
     let project = typescript.createProject('tsconfig.json');
@@ -74,7 +53,6 @@ gulp.task('watch', () => {
 
 gulp.task('manifest', () => {
     return gulp.src('manifest.json')
-        .pipe(addWebResources('build/app/**/*.js', {ignorePath: 'build'}))
         .pipe(gulp.dest('build'));
 });
 

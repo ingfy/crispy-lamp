@@ -20,7 +20,6 @@
     "chai": "^3.5.0",
     "del": "^2.2.0",
     "es6-module-loader": "^0.17.11",
-    "glob": "^7.0.3",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
     "gulp-sourcemaps": "^1.6.0",
@@ -31,7 +30,6 @@
     "karma-mocha-reporter": "^2.0.3",
     "karma-phantomjs-launcher": "^1.0.0",
     "karma-systemjs": "^0.13.0",
-    "through2": "^2.0.1",
     "typescript": "^1.8.10",
     "typescript-require": "^0.2.9-1",
     "typings": "^0.8.1"
