@@ -436,7 +436,7 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
 ### 5. Programmere utvidelsen med watch kjørende
 
 * Bruk `gulp watch` under utvikling for å validere at testene kjører
-* TODO: lim inn kodesnutt etter kodesnutt
+* -Lim- Skriv inn kodesnutt etter kodesnutt
 * Legg til i maniest: `web_accessible_resources`
 * Test utvidelsen på et spørsmål: http://stackoverflow.com/a/2612815
 
