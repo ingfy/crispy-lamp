@@ -4,11 +4,10 @@ module.exports = config => {
     config.set({
         basePath: './',
         
-        frameworks: ['systemjs', 'mocha', 'chai'],
+        frameworks: ['systemjs', 'mocha'],
         plugins: [
             'karma-systemjs', 
             'karma-mocha', 
-            'karma-chai', 
             'karma-phantomjs-launcher',
             'karma-mocha-reporter'
         ],

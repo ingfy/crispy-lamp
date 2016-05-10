@@ -1,7 +1,6 @@
 /// <reference path="./custom-typings/gulp-zip.d.ts" />
 
 import gulp = require('gulp');
-import mocha = require('gulp-mocha');
 import del = require('del');
 import sourcemaps = require('gulp-sourcemaps');
 import zip = require('gulp-zip');

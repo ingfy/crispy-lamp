@@ -199,7 +199,7 @@ Presentasjonen består av å bygge denne utvidelsen live.
     $ npm install --save-dev typescript gulp del gulp-sourcemaps gulp-typescript
     ``` 
     
-3. Gulpfile.ts med typescript.transpile();
+3. Lag en gulpfile.js som kjører en gulpfile.ts med typescript.transpile();
     
     ```javascript
     // gulpfile.js
@@ -315,7 +315,14 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
 
 ### 4. Sette opp enhetstester
 
-* Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headless?
+Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headless? Vi bruker testrammeverket Mocha og assertion-bibioteket chai fordi det er enkelt. Vi kjører mocha gjennom Karma, som setter opp en "hodeløs" nettleser som heter PhantomJS. Dermed kan vi teste kode i kontekst av en nettleser--slik som utvidelsen (som er et innholdsscript) vil kjøre.  
+
+1. Installer mocha, chai, karma, PhantomJS og avhengigheter:
+
+    ```bash
+    npm install --save-dev karma karma-mocha karma-chai karma-mocha-reporter karma-phantomjs-launcher karma-systemjs
+    ```
+
 * Testrammeverk: Mocha
 * Assertions: Chai
 * Karma: velkommen til confighelvete

@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ingfy/ts-talk#readme",
   "devDependencies": {
+    "chai": "^3.5.0",
     "del": "^2.2.0",
     "es6-module-loader": "^0.17.11",
     "glob": "^7.0.3",
@@ -25,21 +26,17 @@
     "gulp-sourcemaps": "^1.6.0",
     "gulp-typescript": "^2.13.3",
     "gulp-zip": "^3.2.0",
-    "jasmine-core": "^2.4.1",
     "karma": "^0.13.22",
-    "karma-chai": "^0.1.0",
     "karma-mocha": "^1.0.1",
     "karma-mocha-reporter": "^2.0.3",
     "karma-phantomjs-launcher": "^1.0.0",
     "karma-systemjs": "^0.13.0",
-    "systemjs": "^0.19.27",
     "through2": "^2.0.1",
     "typescript": "^1.8.10",
     "typescript-require": "^0.2.9-1",
     "typings": "^0.8.1"
   },
   "dependencies": {
-    "chai": "^3.5.0",
-    "typescript": "^1.8.10"
+    "systemjs": "^0.19.27"
   }
 }
