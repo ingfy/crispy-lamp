@@ -100,3 +100,36 @@ Disse er typings som chrome-typings er avhengige av.
 ## Manus og fremgangsmåte
 
 Presentasjonen består av å bygge denne utvidelsen live.
+
+### 1. Hvordan skal vi bygge opp dette her?
+
+* Hva slags utvidelsesfunksjonalitet trenger vi? Innholdsscript eller eventside?
+
+### 2. De første filene: den første kildefila og alt det andre
+
+* git init
+* Husk .gitignore!
+* npm init
+* manifest.json
+* src/contentScript.ts
+
+### 3. Gulp: Starte på gulpfila
+
+* Gulpfile.ts med typescript.transpile();
+* Hvorfor må vi bruke en merkelig måte på å transpilere gulpfila?
+* Starte med typings
+
+### 4. Sette opp enhetstester
+
+* Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headless?
+* Testrammeverk: Mocha
+* Assertions: Chai
+* Ta stilling til SystemJS
+* Karma: velkommen til confighelvete
+
+### 5. Programmere utvidelsen med watch kjørende
+
+### 6. Pakking av utvidelsen
+
+* gulp-zip og "zip"-oppgave
+* Custom typing for gulp-zip 
