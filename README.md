@@ -77,11 +77,9 @@ Gulp kjører alle oppgavene våre.
 | Oppgave   | Beskrivelse |
 | --------- | ----------- |
 | compile   | Kompilér Typescript-kode (kildekode og testkode) til Javascript og legg output i `build/app`.  | 
-| manifest  | Kopier manifestet til `build/` og legg til en liste over alle JS-filene i                      |
-|           | `web_accessible_resources` slik at de kan lastes av SystemJS.                                  |
+| manifest  | Kopier manifestet til `build/`.                                                                |
 | resources | Kopiler bilder (ikonet) til `build/resources`.                                                 |
-| loader    | Konkatenér system.js og loader.js og legg resultatet som `build/contentScript.js`. Dette er    |
-|           | inngangspunktet til appen.                                                                     |
+| loader    | Konkatenér system.js og loader.js og legg resultatet som `build/contentScript.js`. Dette er inngangspunktet til appen.                                                                                   |
 | build     | `compile, manifest, resources`                                                                 |
 | test      | Kjør opp en karmaserver med PhantomJS. Bruk SystemJS til å laste inn test- og kildekodefiler   |
 |           | til Phantom og bruk Mocha til å teste dem.                                                     |
