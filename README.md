@@ -41,6 +41,7 @@ Liste over tilgjengelige språk på Codepad:
 > 4. Trykk på knappen gjør:
 > 5. Åpne et nytt nettleservindu
 > 6. Send en POST-spørring til http://codepad.org/ med skjemadata:
+>
 >    ```
 >    lang: <language> (ex.: Python)
 >    code: <content>
@@ -121,43 +122,40 @@ Presentasjonen består av å bygge denne utvidelsen live.
 * Husk .gitignore!
 * npm init
 * manifest.json
+
+    ```json
+    {
+      "name": "ts-talk",
+      "description": "StackOverflow code run buttons",
+      "version": "0.0.1",
+      "manifest_version": 2,
+      "permissions": [],
+      "icons": {
+        "128": "resources/icon128.png"
+      },
+      "content_scripts": [{
+          "matches": ["*://*.stackoverflow.com/*"],
+          "js": ["contentScript.js"]
+      }]
+    }
+    ```
+  
 * src/contentScript.ts
+
+    ```javascript
+    var hello = document.createElement('p');
+    hello.textContent = 'Hello CDU!';
+    document.body.appendChild(hello);
+    ```
+    
 * src/contentScript.spec.ts (????? -- ;)...)
+
+    ```javascript
+    // TODO: test applikasjonen! (husk å late som at du skrev testene først)
+    ```
+    
 * Ikonet vårt! Viktig å velge riktig
 * Bygg ts-fila manuelt via VS Code og lag pakke manuelt.
-
-Manifest.json:
-
-```json
-{
-  "name": "ts-talk",
-  "description": "StackOverflow code run buttons",
-  "version": "0.0.1",
-  "manifest_version": 2,
-  "permissions": [],
-  "icons": {
-    "128": "resources/icon128.png"
-  },
-  "content_scripts": [{
-      "matches": ["*://*.stackoverflow.com/*"],
-      "js": ["contentScript.js"]
-  }]
-}
-```
-
-src/contentScript.ts:
-
-```javascript
-var hello = document.createElement('p');
-hello.textContent = 'Hello CDU!';
-document.body.appendChild(hello);
-```
-
-src/contentScript.spec.ts:
-
-```
-// TODO: test applikasjonen! (husk å late som at du skrev testene først)
-```
 
 ### 3. Gulp: Starte på gulpfila
 
