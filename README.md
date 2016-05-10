@@ -6,34 +6,51 @@ For fun =)
 
 StackOverflow provides useful code snippets. But sometimes you want to run them!
 
-## Algorithm
+## Codepad.org
 
-Assumes the browser is on a StackOverflow page.
+[Codepad](http://codepad.org/) er en side der man kan kjøre små kodesnutter i forskjellige språk, og lage "pastes", dvs. lenker til koden man kan dele med andre. Vår utvidelse kan bruke denne siden til å støtte kjøring av kodesnutter på nettsider.
 
-1. Find all `<pre><code>...</code></pre>` tags
-2. Somehow find out what language they are in
-3. Append them with a button "Run in codepad!"
-4. Add button click listener GOTO-5:
-5. Open new browser window
-6. Send POST request to http://codepad.org/ with form data:
-   lang: <language> (ex.: Python)
-   code: <content>
-   run: True
-   submit: Submit
+Heldigvis kan Codepad-hjemmesiden motta en anonym POST-spørring som inneholder skjemadata og gi tilbake en side. Vi er heldige her, siden de ikke krever noen cookie eller noe lignende for at POST-spørringen skal fungere.
 
-Available languages:
-C
-C++
-D
-Haskell
-Lua
-OCaml
-PHP
-Perl
-Python
-Ruby
-Scheme
-Tcl
+Det finnes mange slike sider på nettet, men Codepad er veldig enkelt å integere mot. Antallet støttede språk er dessverre ikke så høyt. 
+
+## StackOverflow
+
+[StackOverflow](http://stackoverflow.com/) er en en utviklers beste venn. Det er en Q&A-side der man kan stille spørsmål, få svar, og ikke minst lese andre brukere sine spørsmål. Både spørsmål og svar på denne siden har ofte tilhørende kodesnutter. Av og til er disse kodesnuttene egnet til å kjøres som en selvstendig enhet, og der er her Codepad-integrasjonen denne nettleserutvidelsen kommer inn i bildet.
+
+## Algoritme
+
+> Antar at nettleseren er på en StackOverflow-side.
+>
+> 1. Finn alle `<pre><code>...</code></pre>`-elementer
+> 2. Finn ut hvilket språk de er på
+> 3. Legg til en knapp "Run in codepad!"
+> 4. Trykk på knappen gjør:
+> 5. Åpne et nytt nettleservindu
+> 6. Send en POST-spørring til http://codepad.org/ med skjemadata:
+>    ```
+>    lang: <language> (ex.: Python)
+>    code: <content>
+>    run: True
+>    submit: Submit
+>    ``` 
+
+### Tilgjgengelige språk
+
+Liste over tilgjengelige språk på Codepad:
+
+* C
+* C++
+* D
+* Haskell
+* Lua
+* OCaml
+* PHP
+* Perl
+* Python
+* Ruby
+* Scheme
+* Tcl
 
 ## Oppbygning
 
