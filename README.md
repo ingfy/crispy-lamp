@@ -86,37 +86,17 @@ Gulp kjører alle oppgavene våre.
 | test      | Kjør opp en karmaserver med PhantomJS. Bruk SystemJS til å laste inn test- og kildekodefiler   |
 |           | til Phantom og bruk Mocha til å teste dem.                                                     |
 
-### Hvordan kompilere Typescript-koden til å bli en Chrome-extension
-
-Det kjappe svaret er: Browserify med tsify!
-
-For å pakke det ned til en Chrome-extension må vi bundle filene våre sammen til 
-enkeltfiler som kan kjøres i browseren, av Chrome. TIl dette bruker vi 
-browserify som pakker sammen require-avhengigheter til en enkelt "bundle". Siden
-vi ikke bruker require, men bruker Typescript med sitt import-system (som for
-øvrig er veldig likt ES6 sitt), bruker vi tsify-pluginen til å kjøre alt gjennom
-en Typescript-kompilator som spytter ut kode med CommonJS require-avhengigheter.
-
-TODO: bruke typescript-kompilatoren til bundling i stedet? Hvis vi må bruke
-browserify, hvorfor?
-
-### Testing
-
-karma + mocha + systemjs
-
-## Filewriter? FIlesystem? webrtc/MediaStream??!?!
-
-Disse er typings som chrome-typings er avhengige av.
-
 ## Manus og fremgangsmåte
 
 Presentasjonen består av å bygge denne utvidelsen live.
 
 ### 1. Hvordan skal vi bygge opp dette her?
 
-* Hva slags utvidelsesfunksjonalitet trenger vi? Innholdsscript eller eventside?
+Vi må tenke litt på hva vi skal lage først. Siden vi skal lage en chrome-utvidelse må vi finne ut hva slags script vi skal kjøre. Målet med utvidelsen vår er å legge til en knapp som åpner en ny tab som sender en POST-spørring til Codepad. POST-spørringen kan vi heldigvis implementere med å legge inn HTML `<form>`-elementer på StackOverflow-siden, med action som poster til Codepad. Dermed behøver ikke utvidelsen vår å snakke med Chrome-API-et. Det er en stor fordel, siden vi kan gjøre en del forenklinger når vi vet at utvidelsen vår bare trenger å bestå av et innholdsscript.
 
 ### 2. De første filene: den første kildefila og alt det andre
+
+Vi starter oppsettet av applikasjonen med det vanlige: sette opp et git-repo og en npm-pakke. Vi må også lage et Chrome Extension-manifest og en typescript-fil. Vi legger også inn et ikon for utvidelsen vår. Når de grunnleggende filene er satt opp, lager vi de første kildefilene som en proof of concept. Det er så på tide å teste utvidelsen i Google Chrome! Den gjør ikke stort ennå, men det er viktig å validere at oppsettet vårt fungerer før vi går videre.
 
 1. Opprett et git-repository: `git init`
 2. Husk .gitignore!
@@ -150,32 +130,8 @@ Presentasjonen består av å bygge denne utvidelsen live.
       }]
     }
     ```
-  
-5. src/contentScript.ts
-
-    ```javascript
-    // src/contentScript.ts
     
-    var hello = document.createElement('p');
-    hello.textContent = 'Hello CDU!';
-    document.body.appendChild(hello);
-    ```
-    
-6. src/contentScript.spec.ts (????? -- ;)...)
-
-    ```javascript
-    // src/contentScript.spec.ts
-    
-    // TODO: test applikasjonen! (husk å late som at du skrev testene først)
-    ```
-    
-7. Ikonet vårt! https://githyb.com/ingfy/crispy-lamp/resources/icon128.png
-8. Bygg ts-fila manuelt via VS Code og lag pakke manuelt.
-9. Last inn i Chrome som developer extension og gå til StackOverflow og sjekk at det kommer en ny tag der
-
-### 3. Gulp: Starte på gulpfila
-
-1. Lag en `typescript.json` for å deklarere kompileringen. Denne skal brukes i gulpfila.
+5. Lag en `typescript.json` for å deklarere kompileringen av Typescript i prosjektet. Vi targeter ES5 siden det kjører i Chrome.
     
     ```json
     {
@@ -187,9 +143,44 @@ Presentasjonen består av å bygge denne utvidelsen live.
       },
       "exclude": [
         "node_modules",
-        "build",
-        "gulpfile.ts"
+        "build"
       ]
+    }
+    ```
+  
+6. src/contentScript.ts
+
+    ```javascript
+    // src/contentScript.ts
+    
+    var hello = document.createElement('p');
+    hello.textContent = 'Hello CDU!';
+    document.body.appendChild(hello);
+    ```
+    
+7. src/contentScript.spec.ts (????? -- ;)...)
+
+    ```javascript
+    // src/contentScript.spec.ts
+    
+    // TODO: test applikasjonen! (husk å late som at du skrev testene først)
+    ```
+    
+8. Ikonet vårt! https://githyb.com/ingfy/crispy-lamp/resources/icon128.png
+9. Bygg ts-fila manuelt via VS Code og lag pakke manuelt.
+10. Last inn i Chrome som developer extension og gå til StackOverflow og sjekk at det kommer en ny tag der
+
+### 3. Gulp: Starte på gulpfila
+
+Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett å bruke. Vi kan også skrive gulpfiler i Typescript! Det gir oss enda en mulighet for å bruke TS. Vi setter opp en ganske grunnleggende gulpfil for å bygge prosjektet, og så bruker vi den til å automatisere opprettingen av pakken.
+
+1. Legg til `gulpfile.ts` i "exclude" i typescript.json:
+
+    ```json
+    {
+      ...
+      "exclude": ["gulpfile.ts", ...],
+      ...
     }
     ```
 2. Installere gulp og de pluginene vi trenger:
@@ -313,6 +304,17 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
     
     gulp.task('build', ['compile', 'manifest', 'resources', 'loader']);
     ```
+    
+7. Utvid manifestet `manifest.json` til å deklarere alle javascript-filene i "app"-pakken som tilgjengelige via XHR:
+
+    ```json
+    {
+      ...
+      "web_accessible_resources": ["app/*.js"],
+      '''
+    }
+    ```
+    
 
 ### 4. Sette opp enhetstester
 
@@ -437,7 +439,6 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
 
 * Bruk `gulp watch` under utvikling for å validere at testene kjører
 * ~~Lim~~ Skriv inn kodesnutt etter kodesnutt
-* Legg til i maniest: `web_accessible_resources`
 * Test utvidelsen på et spørsmål: http://stackoverflow.com/a/2612815
 
 ### 6. Pakking av utvidelsen
