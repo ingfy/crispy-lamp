@@ -71,9 +71,19 @@ Følgende rammeverk og verktøy er brukt:
 
 ### Teknologien i bruk
 
-### Utviklingspipeline
+Gulp kjører alle oppgavene våre.
 
-
+| Oppgave   | Beskrivelse |
+| --------- | ----------- |
+| compile   | Kompilér Typescript-kode (kildekode og testkode) til Javascript og legg output i `build/app`.  | 
+| manifest  | Kopier manifestet til `build/` og legg til en liste over alle JS-filene i                      |
+|           | `web_accessible_resources` slik at de kan lastes av SystemJS.                                  |
+| resources | Kopiler bilder (ikonet) til `build/resources`.                                                 |
+| loader    | Konkatenér system.js og loader.js og legg resultatet som `build/contentScript.js`. Dette er    |
+|           | inngangspunktet til appen.                                                                     |
+| build     | `compile, manifest, resources`                                                                 |
+| test      | Kjør opp en karmaserver med PhantomJS. Bruk SystemJS til å laste inn test- og kildekodefiler   |
+|           | til Phantom og bruk Mocha til å teste dem.                                                     |
 
 ### Hvordan kompilere Typescript-koden til å bli en Chrome-extension
 
@@ -111,23 +121,65 @@ Presentasjonen består av å bygge denne utvidelsen live.
 * Husk .gitignore!
 * npm init
 * manifest.json
+  ```json
+  {
+    "name": "ts-talk",
+    "description": "StackOverflow code run buttons",
+    "version": "0.0.1",
+    "manifest_version": 2,
+    "permissions": [],
+    "icons": {
+      "128": "resources/icon128.png"
+    },
+    "content_scripts": [{
+        "matches": ["*://*.stackoverflow.com/*"],
+        "js": ["contentScript.js"]
+    }]
+  }
+  ```
 * src/contentScript.ts
+  ```javascript
+  var hello = document.createElement('p');
+  hello.textContent = 'Hello CDU!';
+  document.body.appendChild(hello);
+  ```
+* src/contentScript.spec.ts (????? -- ;)...)
+  ```
+  // TODO: test applikasjonen! (husk å late som at du skrev testene først)
+  ```
+* Ikonet vårt! Viktig å velge riktig
+* Bygg ts-fila manuelt via VS Code og lag pakke manuelt.
 
 ### 3. Gulp: Starte på gulpfila
 
 * Gulpfile.ts med typescript.transpile();
+* Must-have gulpoppgaver:
+  + compile
+  + build
+  + resources
+  + manifest
 * Hvorfor må vi bruke en merkelig måte på å transpilere gulpfila?
 * Starte med typings
+
+### 4. Hva med flere kildekodefiler i applikasjonen?
+
+Vi vil så absolutt bruke Typescript sitt modulsystem.
+ 
+* Ta stilling til SystemJS
+* Nytt entry point
 
 ### 4. Sette opp enhetstester
 
 * Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headless?
 * Testrammeverk: Mocha
 * Assertions: Chai
-* Ta stilling til SystemJS
 * Karma: velkommen til confighelvete
 
 ### 5. Programmere utvidelsen med watch kjørende
+
+* Bruk `gulp watch` under utvikling for å validere at testene kjører
+* TODO: lim inn kodesnutt etter kodesnutt
+* Legg til i maniest: `web_accessible_resources`
 
 ### 6. Pakking av utvidelsen
 
