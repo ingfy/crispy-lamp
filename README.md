@@ -196,8 +196,13 @@ Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett
     let gulpfile = fs.readFileSync('./gulpfile.ts').toString();
     eval(typescript.transpile(gulpfile));
     ```
+
+4. Starte med typings. Typings er et program som lar oss laste ned og holde styr på typedeklarasjoner som Typescript kan bruke.
+
+    * Installere typings globalt og lokalt: `npm install -g typings; npm install --save-dev typings`
+    * Typings vi trenger til hele prosjektet: https://github.com/ingfy/crispy-lamp/blob/master/typings.json        
     
-4. Opprett en gulpfile.ts med must-have gulpoppgaver: compile, build (default), resources, manifest, clean og watch:
+5. Opprett en gulpfile.ts med must-have gulpoppgaver: compile, build (default), resources, manifest, clean og watch:
   
     ```typescript
     // gulpfile.ts
@@ -237,13 +242,8 @@ Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett
     gulp.task('default', ['build']);
     ```
   
-5. Hvorfor må vi bruke en merkelig måte på å transpilere gulpfila?
-6. Starte med typings. Typings er et program som lar oss laste ned og holde styr på typedeklarasjoner som Typescript kan bruke.
-
-    * Installere typings globalt og lokalt: `npm install -g typings; npm install --save-dev typings`
-    * Typings vi trenger til hele prosjektet: https://github.com/ingfy/crispy-lamp/blob/master/typings.json    
-    
-7. Få "POC-utvidelsen" til å kjøre med gulp
+6. Hvorfor må vi bruke en merkelig måte på å transpilere gulpfila?
+7. Få "POC-utvidelsen" til å kjøre med gulp. Kjør `gulp build` og reload utvidelsen med Chrome Extension-sida. Refresh StackOverflow-sida og verifiser at hilsenen er der fortsatt.
 
 ### 4. Hva med flere kildekodefiler i applikasjonen?
 
