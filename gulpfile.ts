@@ -30,7 +30,7 @@ gulp.task('zip', ['build'], () => {
     let packageFileName = `${packageName}.zip`;
     
     return gulp.src('build/**/*')
-        .pipe(zip(packageName))
+        .pipe(zip(packageFileName))
         .pipe(gulp.dest('dist'));
 });
 
