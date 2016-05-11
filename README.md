@@ -306,7 +306,7 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
     ```
 8. Bygg utvidelsen på nytt med `gulp test`. Sjekk at SystemJS fungerer ved å laste utvidelsen på nytt (gå til [Chrome sin extension side](chrome://extensions) og trykk på "reload"). Gå så til StackOverflow-spørsmålet og valider at hilsingen fortsatt ligger der.
 
-### 4. Sette opp enhetstester
+### 5. Sette opp enhetstester
 
 Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headless? Vi bruker testrammeverket Mocha og assertion-bibioteket chai fordi det er enkelt. Vi kjører Mocha gjennom Karma, som setter opp en "hodeløs" nettleser som heter PhantomJS. Dermed kan vi teste kode i kontekst av en nettleser--slik som utvidelsen (som er et innholdsscript) vil kjøre.  
 
@@ -427,7 +427,7 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
     
 6. Kjør testene fra gulp med `gulp test`!
 
-### 5. Programmere utvidelsen med watch kjørende
+### 6. Programmere utvidelsen med watch kjørende
 
 Tid for å utvikle selve funksjonaliteten til utvidelsen, og ta i bruk Typescript for alvor!
 
@@ -657,7 +657,7 @@ Tid for å utvikle selve funksjonaliteten til utvidelsen, og ta i bruk Typescrip
       
 7. Åpne [Google Chrome Extensions-siden](chrome://extensions), reload utvidelsen og sjekk StackOverflow! Test utvidelsen på et spørsmål: http://stackoverflow.com/a/2612815
 
-### 6. Pakking av utvidelsen
+### 7. Pakking av utvidelsen
 
 For å automatisk pakke utvidelsen for publisering kan vi lage en "zip"-oppgave i gulp. Det finnes ikke typings for denne, så den må vi lage selv.
 
