@@ -163,7 +163,7 @@ Vi starter oppsettet av applikasjonen med det vanlige: sette opp et git-repo og 
     // TODO: test applikasjonen! (husk å late som at du skrev testene først)
     ```
     
-8. Ikonet vårt! https://githyb.com/ingfy/crispy-lamp/resources/icon128.png
+8. Ikonet vårt! https://github.com/ingfy/crispy-lamp/resources/icon128.png
 9. Bygg ts-fila manuelt via VS Code og lag pakke manuelt.
 10. Last inn i Chrome som developer extension og gå til StackOverflow og sjekk at det kommer en ny tag der
 
@@ -408,10 +408,11 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
     // gulpfile.ts
         
     import {Server as KarmaServer} from 'karma';
+    import { join } from 'path';
     
     function runKarma(singleRun: boolean, cb?: () => void) {    
       new KarmaServer({
-        configFile: __dirname + '/karma.conf.js',
+        configFile: path.join(__dirname, 'karma.conf.js'),
         singleRun: singleRun
       }, cb).start();
     }
