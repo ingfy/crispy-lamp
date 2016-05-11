@@ -202,6 +202,19 @@ Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett
     * Installere typings globalt og lokalt: `npm install -g typings; npm install --save-dev typings`
     * Typings vi trenger til hele prosjektet: https://github.com/ingfy/crispy-lamp/blob/master/typings.json        
     
+5. Legg til typings browser-filer i exclude i `typescript.json`:
+ 
+    ```json
+    {
+      "...": "...",
+      "exclude": [
+        "...", 
+        "typings/browser.d.ts",
+        "typings/browser"
+      ]
+    }
+    ```
+    
 5. Opprett en gulpfile.ts med must-have gulpoppgaver: compile, build (default), resources, manifest, clean og watch:
   
     ```typescript
