@@ -250,7 +250,20 @@ Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett
 Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem som nettleseren støtter, siden Chrome-utvidelser kjører i nettleseren. SystemJS gir svaret: "universell modullaster for JavaScript". Vanligvis brukes SystemJS med at bibiolteket lastes først i en browser, også kjøres en konfigurasjon, før den første fila lastes og kjøres ved hjelp av `System.import()`. Vi kan konkattenere disse tre stegene til en JavaScript-fil ved hjelp av en gulptask. Vi ender dermed opp med en ny fil som entry-point til content-scriptet vårt.
  
 1. Installer SystemJS: `npm install --save system.js`
-2. Ny fil som kan konfe SystemJS til å bruke en pakke som vi kaller "app" og laste applikasjonen:
+2. Skriv om `hello.ts` til å eksponere en `main()`-funksjon som inneholder funksjonaliteten:
+
+    ```typescript
+    // src/hello.ts
+    
+    export function main() {
+      var hello = document.createElement('p');
+      
+      hello.textContent = 'Hello CDU!';
+      document.body.appendChild(hello);
+    }
+    ```
+
+3. Ny fil som kan konfe SystemJS til å bruke en pakke som vi kaller "app" og laste applikasjonen:
 
     ```javascript
     // system.loader.js
@@ -264,10 +277,10 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
       }
     })
     
-    System.import('app/hello').then(process => process.main());
+    System.import('app/hello').then(entry => entry.main());
     ```
 
-3. Modifiser compile-oppgaven slik at den spytter ut filer til `build/app`:
+4. Modifiser compile-oppgaven slik at den spytter ut filer til `build/app`:
 
     ```typescript
     // gulpfile.ts
@@ -278,9 +291,9 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
     });
     ```
 
-4. Nytt entry point: Omdøp `src/contentScript.ts` til `src/hello.ts` (og tilsvarende med .spec.ts-fila)
-5. Installer gulp-concat: `npm install --save-dev gulp-concat`
-6. Ny gulp-task: "loader", og endre på "build"-oppgaven til å kjøre den:
+5. Nytt entry point: Omdøp `src/contentScript.ts` til `src/hello.ts` (og tilsvarende med .spec.ts-fila)
+6. Installer gulp-concat: `npm install --save-dev gulp-concat`
+7. Ny gulp-task: "loader", og endre på "build"-oppgaven til å kjøre den:
 
     ```typescript
     // gulpfile.ts
@@ -296,7 +309,7 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
     gulp.task('build', ['compile', 'manifest', 'resources', 'loader']);
     ```
     
-7. Utvid manifestet `manifest.json` til å deklarere alle javascript-filene i "app"-pakken som tilgjengelige via XHR:
+8. Utvid manifestet `manifest.json` til å deklarere alle javascript-filene i "app"-pakken som tilgjengelige via XHR:
 
     ```json
     {
@@ -304,7 +317,7 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
       "web_accessible_resources": ["app/*.js"]
     }
     ```
-8. Bygg utvidelsen på nytt med `gulp test`. Sjekk at SystemJS fungerer ved å laste utvidelsen på nytt (gå til [Chrome sin extension side](chrome://extensions) og trykk på "reload"). Gå så til StackOverflow-spørsmålet og valider at hilsingen fortsatt ligger der.
+9. Bygg utvidelsen på nytt med `gulp test`. Sjekk at SystemJS fungerer ved å laste utvidelsen på nytt (gå til [Chrome sin extension side](chrome://extensions) og trykk på "reload"). Gå så til StackOverflow-spørsmålet og valider at hilsingen fortsatt ligger der.
 
 ### 5. Sette opp enhetstester
 
