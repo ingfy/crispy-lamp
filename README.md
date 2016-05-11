@@ -208,8 +208,9 @@ Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett
 
 4. Starte med typings. Typings er et program som lar oss laste ned og holde styr på typedeklarasjoner som Typescript kan bruke.
 
-    * Installere typings globalt og lokalt: `npm install -g typings; npm install --save-dev typings`
-    * Typings vi trenger til hele prosjektet: https://github.com/ingfy/crispy-lamp/blob/master/typings.json        
+  a. Installere typings globalt og lokalt: `npm install -g typings; npm install --save-dev typings`
+  b. Last ned typings vi trenger til hele prosjektet: https://github.com/ingfy/crispy-lamp/blob/master/typings.json og lagre som fil typings.json
+  c. Installer typene med `typings install`
     
 5. Legg til typings browser-filer i exclude i `typescript.json`. Siden vi kan generere sourcemaps med hjelp av gulp, skrur vi det også av:
  
@@ -385,7 +386,7 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
 2. Installer Mocha, Chai, Karma, PhantomJS og avhengigheter:
 
     ```bash
-    $ npm install --save-dev karma karma-mocha chai karma-mocha-reporter karma-phantomjs-launcher karma-systemjs
+    $ npm install --save-dev karma mocha karma-mocha chai karma-mocha-reporter phantomjs-prebuilt karma-phantomjs-launcher
     ```
     
 3. Konfigurer karma til å bruke Mocha og PhantomJS, og å hente opp kompilerte filer:
