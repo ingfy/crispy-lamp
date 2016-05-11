@@ -134,6 +134,7 @@ Vi starter oppsettet av applikasjonen med det vanlige: sette opp et git-repo og 
     ```json
     {
       "compilerOptions": {
+        "target": "es5",
         "outDir": "build",
         "noImplicitAny": false
       },
