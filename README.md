@@ -240,7 +240,7 @@ Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett
 5. Hvorfor må vi bruke en merkelig måte på å transpilere gulpfila?
 6. Starte med typings. Typings er et program som lar oss laste ned og holde styr på typedeklarasjoner som Typescript kan bruke.
 
-    * Installere typings globalt: `npm install -g typings`
+    * Installere typings globalt og lokalt: `npm install -g typings; npm install --save-dev typings`
     * Typings vi trenger til hele prosjektet: https://github.com/ingfy/crispy-lamp/blob/master/typings.json    
     
 7. Få "POC-utvidelsen" til å kjøre med gulp
