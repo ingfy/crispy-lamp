@@ -651,8 +651,10 @@ Tid for å utvikle selve funksjonaliteten til utvidelsen, og ta i bruk Typescrip
     //...
     System.import('app/processStackOverflow').then(process => process.main());
     ```
+    
+6. Slett de nå utdaterte filene vi begynte med `hello.ts` og `hello.spec.ts`.
       
-6. Åpne [Google Chrome Extensions-siden](chrome://extensions), reload utvidelsen og sjekk StackOverflow! Test utvidelsen på et spørsmål: http://stackoverflow.com/a/2612815
+7. Åpne [Google Chrome Extensions-siden](chrome://extensions), reload utvidelsen og sjekk StackOverflow! Test utvidelsen på et spørsmål: http://stackoverflow.com/a/2612815
 
 ### 6. Pakking av utvidelsen
 
