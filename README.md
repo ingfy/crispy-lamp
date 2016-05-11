@@ -304,7 +304,7 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
       "web_accessible_resources": ["app/*.js"]
     }
     ```
-    
+8. Bygg utvidelsen på nytt med `gulp test`. Sjekk at SystemJS fungerer ved å laste utvidelsen på nytt (gå til [Chrome sin extension side](chrome://extensions) og trykk på "reload"). Gå så til StackOverflow-spørsmålet og valider at hilsingen fortsatt ligger der.
 
 ### 4. Sette opp enhetstester
 
