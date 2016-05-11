@@ -60,9 +60,6 @@ En utvidelse til Chrome består av et manifest, et sett med JavaScript- og HTML-
 
 ## Oppbygning
 
-Denne seksjonen beskriver hvordan prosjektet blir strukturert. Dette er 
-grunnmuren til presentasjonen.
-
 Følgende rammeverk og verktøy er brukt:
 
 1. Typescript
@@ -86,13 +83,13 @@ Gulp kjører alle oppgavene våre.
 | test      | Kjør opp en karmaserver med PhantomJS. Bruk SystemJS til å laste inn test- og kildekodefiler   |
 |           | til Phantom og bruk Mocha til å teste dem.                                                     |
 
-## Manus og fremgangsmåte
+## Fremgangsmåte
 
-Presentasjonen består av å bygge denne utvidelsen live.
+Her er en oppskrift på å bygge utvidelsen.
 
 ### 1. Hvordan skal vi bygge opp dette her?
 
-Vi må tenke litt på hva vi skal lage først. Siden vi skal lage en chrome-utvidelse må vi finne ut hva slags script vi skal kjøre. Målet med utvidelsen vår er å legge til en knapp som åpner en ny tab som sender en POST-spørring til Codepad. POST-spørringen kan vi heldigvis implementere med å legge inn HTML `<form>`-elementer på StackOverflow-siden, med action som poster til Codepad. Dermed behøver ikke utvidelsen vår å snakke med Chrome-API-et. Det er en stor fordel, siden vi kan gjøre en del forenklinger når vi vet at utvidelsen vår bare trenger å bestå av et innholdsscript.
+Vi må tenke litt på hva vi skal lage først. Siden vi skal lage en Chrome-utvidelse må vi finne ut hva slags script vi skal kjøre. Målet med utvidelsen vår er å legge til en knapp som åpner en ny tab som sender en POST-spørring til Codepad. POST-spørringen kan vi heldigvis implementere med å legge inn HTML `<form>`-elementer på StackOverflow-siden, med action som poster til Codepad. Dermed behøver ikke utvidelsen vår å snakke med Chrome-API-et. Det er en stor fordel, siden vi kan gjøre en del forenklinger når vi vet at utvidelsen vår bare trenger å bestå av et innholdsscript.
 
 ### 2. De første filene: den første kildefila og alt det andre
 
