@@ -128,14 +128,14 @@ Vi starter oppsettet av applikasjonen med det vanlige: sette opp et git-repo og 
     }
     ```
     
-5. Lag en `typescript.json` for å deklarere kompileringen av Typescript i prosjektet. Vi targeter ES5 siden det kjører i Chrome.
+5. Installer typescript globalt: `$ npm install -g typescript`
+6. Lag en `typescript.json` for å deklarere kompileringen av Typescript i prosjektet. Vi targeter ES5 siden det kjører i Chrome.
     
     ```json
     {
       "compilerOptions": {
         "target": "es5",
         "outDir": "build",
-        "sourceMap": false,
         "noImplicitAny": false
       },
       "exclude": [
@@ -145,7 +145,7 @@ Vi starter oppsettet av applikasjonen med det vanlige: sette opp et git-repo og 
     }
     ```
   
-6. src/contentScript.ts
+7. src/contentScript.ts
 
     ```javascript
     // src/contentScript.ts
@@ -155,7 +155,7 @@ Vi starter oppsettet av applikasjonen med det vanlige: sette opp et git-repo og 
     document.body.appendChild(hello);
     ```
     
-7. src/contentScript.spec.ts (????? -- ;)...)
+8. src/contentScript.spec.ts (????? -- ;)...)
 
     ```javascript
     // src/contentScript.spec.ts
@@ -163,9 +163,18 @@ Vi starter oppsettet av applikasjonen med det vanlige: sette opp et git-repo og 
     // TODO: test applikasjonen! (husk å late som at du skrev testene først)
     ```
     
-8. Ikonet vårt! https://githyb.com/ingfy/crispy-lamp/resources/icon128.png
-9. Bygg ts-fila manuelt via VS Code og lag pakke manuelt.
-10. Last inn i Chrome som developer extension og gå til StackOverflow og sjekk at det kommer en ny tag der
+9. Ikonet vårt! https://github.com/ingfy/crispy-lamp/resources/icon128.png
+10. Bygg ts-fila manuelt og lag pakke manuelt:
+
+    ```bash
+    $ mkdir build
+    $ mkdir build/resources
+    $ cp resources/icon128.png build/resources
+    $ cp manifest.json build
+    $ tsc
+    ```
+
+11. Last inn i Chrome som developer extension via [Chrome sin extension-side](chrome://extension) og gå til StackOverflow og sjekk at det kommer en ny tag der
 
 ### 3. Gulp: Starte på gulpfila
 
@@ -182,7 +191,7 @@ Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett
 2. Installere gulp og de pluginene vi trenger:
 
     ```bash
-    $ npm install -g gulp typescript
+    $ npm install -g gulp
     $ npm install --save-dev typescript gulp del gulp-sourcemaps gulp-typescript
     ``` 
     
@@ -196,8 +205,31 @@ Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett
     let gulpfile = fs.readFileSync('./gulpfile.ts').toString();
     eval(typescript.transpile(gulpfile));
     ```
+
+4. Starte med typings. Typings er et program som lar oss laste ned og holde styr på typedeklarasjoner som Typescript kan bruke.
+
+    * Installere typings globalt og lokalt: `npm install -g typings; npm install --save-dev typings`
+    * Typings vi trenger til hele prosjektet: https://github.com/ingfy/crispy-lamp/blob/master/typings.json        
     
-4. Opprett en gulpfile.ts med must-have gulpoppgaver: compile, build (default), resources, manifest, clean og watch:
+5. Legg til typings browser-filer i exclude i `typescript.json`. Siden vi kan generere sourcemaps med hjelp av gulp, skrur vi det også av:
+ 
+    ```json
+    {
+      "compilerOptions": {
+        "...": "...",
+        "sourceMap": false
+      },
+      "exclude": [
+        "...", 
+        "typings/browser.d.ts",
+        "typings/browser"
+      ]
+    }
+    ```
+    
+6. 
+    
+5. Opprett en gulpfile.ts med must-have gulpoppgaver: compile, build (default), resources, manifest, clean og watch:
   
     ```typescript
     // gulpfile.ts
@@ -237,20 +269,41 @@ Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett
     gulp.task('default', ['build']);
     ```
   
-5. Hvorfor må vi bruke en merkelig måte på å transpilere gulpfila?
-6. Starte med typings. Typings er et program som lar oss laste ned og holde styr på typedeklarasjoner som Typescript kan bruke.
-
-    * Installere typings globalt: `npm install -g typings`
-    * Typings vi trenger til hele prosjektet: https://github.com/ingfy/crispy-lamp/blob/master/typings.json    
-    
-7. Få "POC-utvidelsen" til å kjøre med gulp
+6. Hvorfor må vi bruke en merkelig måte på å transpilere gulpfila?
+7. Få "POC-utvidelsen" til å kjøre med gulp. Kjør `gulp build` og reload utvidelsen med Chrome Extension-sida. Refresh StackOverflow-sida og verifiser at hilsenen er der fortsatt.
+8. Gå inn i Developer Tools i Google Chrome og sjekk at sourcemaps virker.
 
 ### 4. Hva med flere kildekodefiler i applikasjonen?
 
 Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem som nettleseren støtter, siden Chrome-utvidelser kjører i nettleseren. SystemJS gir svaret: "universell modullaster for JavaScript". Vanligvis brukes SystemJS med at bibiolteket lastes først i en browser, også kjøres en konfigurasjon, før den første fila lastes og kjøres ved hjelp av `System.import()`. Vi kan konkattenere disse tre stegene til en JavaScript-fil ved hjelp av en gulptask. Vi ender dermed opp med en ny fil som entry-point til content-scriptet vårt.
  
 1. Installer SystemJS: `npm install --save system.js`
-2. Ny fil som kan konfe SystemJS til å bruke en pakke som vi kaller "app" og laste applikasjonen:
+2. Fortell typescript-kompilatoren at den skal generere SystemJS-moduler ved å endre `typescript.json`:
+ 
+    ```json
+    {
+        "compilerOptions": {
+            "module": "system",
+            "...": "..."
+        },
+        "...": "..."
+    }
+    ```
+
+3. Skriv om `hello.ts` til å eksponere en `main()`-funksjon som inneholder funksjonaliteten:
+
+    ```typescript
+    // src/hello.ts
+    
+    export function main() {
+      var hello = document.createElement('p');
+      
+      hello.textContent = 'Hello CDU!';
+      document.body.appendChild(hello);
+    }
+    ```
+
+4. Ny fil som kan konfe SystemJS til å bruke en pakke som vi kaller "app" og laste applikasjonen:
 
     ```javascript
     // system.loader.js
@@ -264,10 +317,10 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
       }
     })
     
-    System.import('app/hello').then(process => process.main());
+    System.import('app/hello').then(entry => entry.main());
     ```
 
-3. Modifiser compile-oppgaven slik at den spytter ut filer til `build/app`:
+5. Modifiser compile-oppgaven slik at den spytter ut filer til `build/app`:
 
     ```typescript
     // gulpfile.ts
@@ -278,9 +331,9 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
     });
     ```
 
-4. Nytt entry point: Omdøp `src/contentScript.ts` til `src/hello.ts` (og tilsvarende med .spec.ts-fila)
-5. Installer gulp-concat: `npm install --save-dev gulp-concat`
-6. Ny gulp-task: "loader", og endre på "build"-oppgaven til å kjøre den:
+6. Nytt entry point: Omdøp `src/contentScript.ts` til `src/hello.ts` (og tilsvarende med .spec.ts-fila)
+7. Installer gulp-concat: `npm install --save-dev gulp-concat`
+8. Ny gulp-task: "loader", og endre på "build"-oppgaven til å kjøre den:
 
     ```typescript
     // gulpfile.ts
@@ -296,7 +349,7 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
     gulp.task('build', ['compile', 'manifest', 'resources', 'loader']);
     ```
     
-7. Utvid manifestet `manifest.json` til å deklarere alle javascript-filene i "app"-pakken som tilgjengelige via XHR:
+8. Utvid manifestet `manifest.json` til å deklarere alle javascript-filene i "app"-pakken som tilgjengelige via XHR:
 
     ```json
     {
@@ -304,13 +357,13 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
       "web_accessible_resources": ["app/*.js"]
     }
     ```
-    
+9. Bygg utvidelsen på nytt med `gulp build`. Sjekk at SystemJS fungerer ved å laste utvidelsen på nytt (gå til [Chrome sin extension side](chrome://extensions) og trykk på "reload"). Gå så til StackOverflow-spørsmålet og valider at hilsingen fortsatt ligger der.
 
-### 4. Sette opp enhetstester
+### 5. Sette opp enhetstester
 
 Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headless? Vi bruker testrammeverket Mocha og assertion-bibioteket chai fordi det er enkelt. Vi kjører Mocha gjennom Karma, som setter opp en "hodeløs" nettleser som heter PhantomJS. Dermed kan vi teste kode i kontekst av en nettleser--slik som utvidelsen (som er et innholdsscript) vil kjøre.  
 
-0. Skriv en test for `hello.ts`:
+1. Skriv en test for `hello.ts`:
 
     ```typescript
     // src/hello.spec.ts
@@ -329,13 +382,13 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
     });
     ```
 
-1. Installer Mocha, Chai, Karma, PhantomJS og avhengigheter:
+2. Installer Mocha, Chai, Karma, PhantomJS og avhengigheter:
 
     ```bash
     $ npm install --save-dev karma karma-mocha chai karma-mocha-reporter karma-phantomjs-launcher karma-systemjs
     ```
     
-2. Konfigurer karma til å bruke Mocha og PhantomJS, og å hente opp kompilerte filer:
+3. Konfigurer karma til å bruke Mocha og PhantomJS, og å hente opp kompilerte filer:
 
     ```javascript
     // karma.conf.js
@@ -371,7 +424,7 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
     };
     ```
 
-3. Konfigurer Karma til å bruke SystemJS, og PhantomJS, og la filer hente opp chai gjennom systemjs konfig, ved å merge inn følgende konfigurasjon for SystemJS:
+4. Konfigurer Karma til å bruke SystemJS, og PhantomJS, og la filer hente opp chai gjennom systemjs konfig, ved å merge inn følgende konfigurasjon for SystemJS:
 
     ```javascript
     // karma.conf.js
@@ -401,17 +454,18 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
     
     ```
 
-4. Kjør karma direkte og test: `.\node_modules\.bin\karma start`
-5. Lag gulp-tasker for å starte karma og watche:
+5. Kjør karma direkte og test: `.\node_modules\.bin\karma start`
+6. Lag gulp-tasker for å starte karma og watche:
 
     ```typescript
     // gulpfile.ts
         
     import {Server as KarmaServer} from 'karma';
+    import { join } from 'path';
     
     function runKarma(singleRun: boolean, cb?: () => void) {    
       new KarmaServer({
-        configFile: __dirname + '/karma.conf.js',
+        configFile: path.join(__dirname, 'karma.conf.js'),
         singleRun: singleRun
       }, cb).start();
     }
@@ -424,9 +478,9 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
     });
     ```
     
-6. Kjør testene fra gulp med `gulp test`!
+7. Kjør testene fra gulp med `gulp test`!
 
-### 5. Programmere utvidelsen med watch kjørende
+### 6. Programmere utvidelsen med watch kjørende
 
 Tid for å utvikle selve funksjonaliteten til utvidelsen, og ta i bruk Typescript for alvor!
 
@@ -651,10 +705,12 @@ Tid for å utvikle selve funksjonaliteten til utvidelsen, og ta i bruk Typescrip
     //...
     System.import('app/processStackOverflow').then(process => process.main());
     ```
+    
+6. Slett de nå utdaterte filene vi begynte med `hello.ts` og `hello.spec.ts`.
       
-6. Åpne [Google Chrome Extensions-siden](chrome://extensions), reload utvidelsen og sjekk StackOverflow! Test utvidelsen på et spørsmål: http://stackoverflow.com/a/2612815
+7. Åpne [Google Chrome Extensions-siden](chrome://extensions), reload utvidelsen og sjekk StackOverflow! Test utvidelsen på et spørsmål: http://stackoverflow.com/a/2612815
 
-### 6. Pakking av utvidelsen
+### 7. Pakking av utvidelsen
 
 For å automatisk pakke utvidelsen for publisering kan vi lage en "zip"-oppgave i gulp. Det finnes ikke typings for denne, så den må vi lage selv.
 
