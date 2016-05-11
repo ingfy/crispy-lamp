@@ -128,7 +128,8 @@ Vi starter oppsettet av applikasjonen med det vanlige: sette opp et git-repo og 
     }
     ```
     
-5. Lag en `typescript.json` for å deklarere kompileringen av Typescript i prosjektet. Vi targeter ES5 siden det kjører i Chrome.
+5. Installer typescript globalt: `$ npm install -g typescript`
+6. Lag en `typescript.json` for å deklarere kompileringen av Typescript i prosjektet. Vi targeter ES5 siden det kjører i Chrome.
     
     ```json
     {
@@ -145,7 +146,7 @@ Vi starter oppsettet av applikasjonen med det vanlige: sette opp et git-repo og 
     }
     ```
   
-6. src/contentScript.ts
+7. src/contentScript.ts
 
     ```javascript
     // src/contentScript.ts
@@ -155,7 +156,7 @@ Vi starter oppsettet av applikasjonen med det vanlige: sette opp et git-repo og 
     document.body.appendChild(hello);
     ```
     
-7. src/contentScript.spec.ts (????? -- ;)...)
+8. src/contentScript.spec.ts (????? -- ;)...)
 
     ```javascript
     // src/contentScript.spec.ts
@@ -163,9 +164,18 @@ Vi starter oppsettet av applikasjonen med det vanlige: sette opp et git-repo og 
     // TODO: test applikasjonen! (husk å late som at du skrev testene først)
     ```
     
-8. Ikonet vårt! https://github.com/ingfy/crispy-lamp/resources/icon128.png
-9. Bygg ts-fila manuelt via VS Code og lag pakke manuelt.
-10. Last inn i Chrome som developer extension og gå til StackOverflow og sjekk at det kommer en ny tag der
+9. Ikonet vårt! https://github.com/ingfy/crispy-lamp/resources/icon128.png
+10. Bygg ts-fila manuelt og lag pakke manuelt:
+
+    ```bash
+    $ mkdir build
+    $ mkdir build/resources
+    $ cp resources/icon128.png build/resources
+    $ cp manifest.json build
+    $ tsc
+    ```
+
+11. Last inn i Chrome som developer extension via [Chrome sin extension-side](chrome://extension) og gå til StackOverflow og sjekk at det kommer en ny tag der
 
 ### 3. Gulp: Starte på gulpfila
 
@@ -182,7 +192,7 @@ Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett
 2. Installere gulp og de pluginene vi trenger:
 
     ```bash
-    $ npm install -g gulp typescript
+    $ npm install -g gulp
     $ npm install --save-dev typescript gulp del gulp-sourcemaps gulp-typescript
     ``` 
     
