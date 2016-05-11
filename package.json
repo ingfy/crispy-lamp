@@ -17,14 +17,8 @@
   },
   "homepage": "https://github.com/ingfy/ts-talk#readme",
   "devDependencies": {
-    "del": "^2.2.0",
     "es6-module-loader": "^0.17.11",
-    "gulp": "^3.9.1",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-typescript": "^2.13.3",
-    "typescript": "^1.8.10",
-    "typescript-require": "^0.2.9-1",
-    "typings": "^0.8.1"
+    "typescript-require": "^0.2.9-1"
   },
   "dependencies": {
   }
