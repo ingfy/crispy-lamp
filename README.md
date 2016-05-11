@@ -134,9 +134,7 @@ Vi starter oppsettet av applikasjonen med det vanlige: sette opp et git-repo og 
     ```json
     {
       "compilerOptions": {
-        "target": "es5",
         "outDir": "build",
-        "sourceMap": false,
         "noImplicitAny": false
       },
       "exclude": [
@@ -212,11 +210,14 @@ Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett
     * Installere typings globalt og lokalt: `npm install -g typings; npm install --save-dev typings`
     * Typings vi trenger til hele prosjektet: https://github.com/ingfy/crispy-lamp/blob/master/typings.json        
     
-5. Legg til typings browser-filer i exclude i `typescript.json`:
+5. Legg til typings browser-filer i exclude i `typescript.json`. Siden vi kan generere sourcemaps med hjelp av gulp, skrur vi det også av:
  
     ```json
     {
-      "...": "...",
+      "compilerOptions": {
+        "...": "...",
+        "sourceMap": false
+      },
       "exclude": [
         "...", 
         "typings/browser.d.ts",
@@ -224,6 +225,8 @@ Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett
       ]
     }
     ```
+    
+6. 
     
 5. Opprett en gulpfile.ts med must-have gulpoppgaver: compile, build (default), resources, manifest, clean og watch:
   
@@ -267,13 +270,26 @@ Vi vil bruke gulp til å bygge prosjektet siden det er veldig fleksibelt og lett
   
 6. Hvorfor må vi bruke en merkelig måte på å transpilere gulpfila?
 7. Få "POC-utvidelsen" til å kjøre med gulp. Kjør `gulp build` og reload utvidelsen med Chrome Extension-sida. Refresh StackOverflow-sida og verifiser at hilsenen er der fortsatt.
+8. Gå inn i Developer Tools i Google Chrome og sjekk at sourcemaps virker.
 
 ### 4. Hva med flere kildekodefiler i applikasjonen?
 
 Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem som nettleseren støtter, siden Chrome-utvidelser kjører i nettleseren. SystemJS gir svaret: "universell modullaster for JavaScript". Vanligvis brukes SystemJS med at bibiolteket lastes først i en browser, også kjøres en konfigurasjon, før den første fila lastes og kjøres ved hjelp av `System.import()`. Vi kan konkattenere disse tre stegene til en JavaScript-fil ved hjelp av en gulptask. Vi ender dermed opp med en ny fil som entry-point til content-scriptet vårt.
  
 1. Installer SystemJS: `npm install --save system.js`
-2. Skriv om `hello.ts` til å eksponere en `main()`-funksjon som inneholder funksjonaliteten:
+2. Fortell typescript-kompilatoren at den skal generere SystemJS-moduler ved å endre `typescript.json`:
+ 
+    ```json
+    {
+        "compilerOptions": {
+            "module": "system",
+            "...": "..."
+        },
+        "...": "..."
+    }
+    ```
+
+3. Skriv om `hello.ts` til å eksponere en `main()`-funksjon som inneholder funksjonaliteten:
 
     ```typescript
     // src/hello.ts
@@ -286,7 +302,7 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
     }
     ```
 
-3. Ny fil som kan konfe SystemJS til å bruke en pakke som vi kaller "app" og laste applikasjonen:
+4. Ny fil som kan konfe SystemJS til å bruke en pakke som vi kaller "app" og laste applikasjonen:
 
     ```javascript
     // system.loader.js
@@ -303,7 +319,7 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
     System.import('app/hello').then(entry => entry.main());
     ```
 
-4. Modifiser compile-oppgaven slik at den spytter ut filer til `build/app`:
+5. Modifiser compile-oppgaven slik at den spytter ut filer til `build/app`:
 
     ```typescript
     // gulpfile.ts
@@ -314,9 +330,9 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
     });
     ```
 
-5. Nytt entry point: Omdøp `src/contentScript.ts` til `src/hello.ts` (og tilsvarende med .spec.ts-fila)
-6. Installer gulp-concat: `npm install --save-dev gulp-concat`
-7. Ny gulp-task: "loader", og endre på "build"-oppgaven til å kjøre den:
+6. Nytt entry point: Omdøp `src/contentScript.ts` til `src/hello.ts` (og tilsvarende med .spec.ts-fila)
+7. Installer gulp-concat: `npm install --save-dev gulp-concat`
+8. Ny gulp-task: "loader", og endre på "build"-oppgaven til å kjøre den:
 
     ```typescript
     // gulpfile.ts
@@ -340,13 +356,13 @@ Vi vil så absolutt bruke Typescript sitt modulsystem. Vi trenger et modulsystem
       "web_accessible_resources": ["app/*.js"]
     }
     ```
-9. Bygg utvidelsen på nytt med `gulp test`. Sjekk at SystemJS fungerer ved å laste utvidelsen på nytt (gå til [Chrome sin extension side](chrome://extensions) og trykk på "reload"). Gå så til StackOverflow-spørsmålet og valider at hilsingen fortsatt ligger der.
+9. Bygg utvidelsen på nytt med `gulp build`. Sjekk at SystemJS fungerer ved å laste utvidelsen på nytt (gå til [Chrome sin extension side](chrome://extensions) og trykk på "reload"). Gå så til StackOverflow-spørsmålet og valider at hilsingen fortsatt ligger der.
 
 ### 5. Sette opp enhetstester
 
 Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headless? Vi bruker testrammeverket Mocha og assertion-bibioteket chai fordi det er enkelt. Vi kjører Mocha gjennom Karma, som setter opp en "hodeløs" nettleser som heter PhantomJS. Dermed kan vi teste kode i kontekst av en nettleser--slik som utvidelsen (som er et innholdsscript) vil kjøre.  
 
-0. Skriv en test for `hello.ts`:
+1. Skriv en test for `hello.ts`:
 
     ```typescript
     // src/hello.spec.ts
@@ -365,13 +381,13 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
     });
     ```
 
-1. Installer Mocha, Chai, Karma, PhantomJS og avhengigheter:
+2. Installer Mocha, Chai, Karma, PhantomJS og avhengigheter:
 
     ```bash
     $ npm install --save-dev karma karma-mocha chai karma-mocha-reporter karma-phantomjs-launcher karma-systemjs
     ```
     
-2. Konfigurer karma til å bruke Mocha og PhantomJS, og å hente opp kompilerte filer:
+3. Konfigurer karma til å bruke Mocha og PhantomJS, og å hente opp kompilerte filer:
 
     ```javascript
     // karma.conf.js
@@ -407,7 +423,7 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
     };
     ```
 
-3. Konfigurer Karma til å bruke SystemJS, og PhantomJS, og la filer hente opp chai gjennom systemjs konfig, ved å merge inn følgende konfigurasjon for SystemJS:
+4. Konfigurer Karma til å bruke SystemJS, og PhantomJS, og la filer hente opp chai gjennom systemjs konfig, ved å merge inn følgende konfigurasjon for SystemJS:
 
     ```javascript
     // karma.conf.js
@@ -437,8 +453,8 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
     
     ```
 
-4. Kjør karma direkte og test: `.\node_modules\.bin\karma start`
-5. Lag gulp-tasker for å starte karma og watche:
+5. Kjør karma direkte og test: `.\node_modules\.bin\karma start`
+6. Lag gulp-tasker for å starte karma og watche:
 
     ```typescript
     // gulpfile.ts
@@ -461,7 +477,7 @@ Hvordan skal vi kjøre testene? Rene unittester? I kontekst av en browser? Headl
     });
     ```
     
-6. Kjør testene fra gulp med `gulp test`!
+7. Kjør testene fra gulp med `gulp test`!
 
 ### 6. Programmere utvidelsen med watch kjørende
 
